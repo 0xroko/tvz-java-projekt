@@ -1,0 +1,73 @@
+@import 'vars';
+
+.root {
+    -fx-background-color: $bg;
+}
+
+
+.button {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+
+    -fx-background-radius:0;
+    -fx-border-color:black;
+    -fx-border-width: 1;
+    -fx-background-insets: 0;
+
+    &:hover {
+        -fx-background-color: darken($bg, 5%);
+        -fx-text-fill: $fg;
+    }
+
+    &:armed {
+        -fx-background-color: darken($bg, 10%);
+        -fx-text-fill: $fg;
+    }
+}
+
+.table-view {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+    -fx-border-color:transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-alignment: center-right;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background{
+    -fx-border-color: $fg;
+    -fx-border-width: 0 0 1 0;
+
+    -fx-background-color: $bg;
+    -fx-background-radius: 0px 0px 0px 0px;
+    -fx-padding: 0 0 5px 0;
+}
+
+.table-view .table-cell{
+    -fx-padding: 2 0 2 10px;
+
+    -fx-border-color: darken($bg, 2%);
+    -fx-border-width: 0 0 1 0;
+
+}
+.table-row-cell:hover {
+    -fx-background-color:  darken($bg, 5%);
+    -fx-text-background-color:  $fg;
+}
+.table-row-cell{
+    -fx-padding: 0.0em;
+    -fx-background-color:  $bg;
+    -fx-text-background-color:  $fg;
+}
+
+
