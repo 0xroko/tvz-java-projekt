@@ -1,16 +1,10 @@
 @font-face {
-    font-family: 'Space Mono';
-    src: url('fonts/SpaceMono-Regular.ttf');
-}
-
-@font-face {
-    font-family: 'Space Mono';
-    font-weight: bold;
-    src: url('fonts/SpaceMono-Bold.ttf');
+    font-family: 'SF Mono Medium';
+    src: url('fonts/SFMono-Medium.otf');
 }
 
 
 .root {
-    -fx-font-family: 'Space Mono';
-}
+    -fx-font-family: 'SF Mono Medium';
 
+}

@@ -12,6 +12,9 @@ module com.r.projektnizad {
 
   opens com.r.projektnizad.main to javafx.fxml;
   exports com.r.projektnizad.main;
+  exports com.r.projektnizad.models;
+  exports com.r.projektnizad.services;
   opens com.r.projektnizad.controllers to javafx.fxml;
   exports com.r.projektnizad.controllers;
+  exports com.r.projektnizad.enums;
 }

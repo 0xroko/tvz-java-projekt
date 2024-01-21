@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox styleClass="navbar"  prefHeight="26.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.r.projektnizad.controllers.Menubar">
+    <MenuBar fx:id="menubar" >
+        <Menu mnemonicParsing="false" text="Narudžbe">
+            <MenuItem mnemonicParsing="false" onAction="#viewOrders" text="Pretraga" />
+            <MenuItem mnemonicParsing="false" onAction="#addOrder" text="Dodaj" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="Artikli">
+            <MenuItem mnemonicParsing="false" onAction="#viewItems" text="Pretraga" />
+            <MenuItem mnemonicParsing="false" onAction="#addItem" text="Dodaj" />
+        </Menu>
+        <Menu mnemonicParsing="false" text="Rezervacije">
+            <MenuItem mnemonicParsing="false" onAction="#viewReservations" text="Pretraga" />
+            <MenuItem mnemonicParsing="false" onAction="#addReservation" text="Dodaj" />
+        </Menu>
+    </MenuBar>
+
+    <HBox fx:id="leading" alignment="CENTER_RIGHT" spacing="8.0" HBox.hgrow="ALWAYS">
+        <Label styleClass="navbar-label" fx:id="userNameLabel" text="" />
+        <ImageView fx:id="logout" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@../img/sign-out.png" />
+        </ImageView>
+      <padding>
+         <Insets right="7.0" />
+      </padding>
+    </HBox>
+</HBox>

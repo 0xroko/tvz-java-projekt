@@ -96,6 +96,12 @@
                     <include>**/*.fxml</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>

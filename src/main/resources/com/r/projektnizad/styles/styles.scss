@@ -2,12 +2,24 @@
 
 .root {
     -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+    -fx-font-size: $text-md;
 }
 
+.container {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+}
 
 .button {
     -fx-background-color: $bg;
     -fx-text-fill: $fg;
+
+    -fx-padding: $button-padding;
+
+    -fx-font-size: $text-md;
+
+    -fx-border-radius: $border-radius;
 
     -fx-background-radius:0;
     -fx-border-color:black;
@@ -69,5 +81,125 @@
     -fx-background-color:  $bg;
     -fx-text-background-color:  $fg;
 }
+
+
+/*input*/
+.text-field {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+
+    -fx-font-size: $text-md;
+
+    -fx-padding: $input-padding;
+
+   -fx-background-radius: $radius;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-background-insets: 0;
+
+    -fx-border-radius: $border-radius;
+}
+
+.text-field:hover {
+    -fx-background-color: darken($bg, 5%);
+    -fx-text-fill: $fg;
+}
+
+.text-field:focused {
+    -fx-background-color: $bg;
+    -fx-text-fill: darken($fg, 10%);
+}
+
+.password-field {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+
+    -fx-pref-height: $input-height;
+
+   -fx-background-radius: $radius;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+    -fx-background-insets: 0;
+    -fx-border-radius: $border-radius;
+}
+
+.password-field:hover {
+    -fx-background-color: darken($bg, 5%);
+    -fx-text-fill: $fg;
+}
+
+.password-field:focused {
+    -fx-background-color: $bg;
+    -fx-text-fill: darken($fg, 10%);
+}
+
+.input-field-error {
+    -fx-border-color: $error;
+}
+
+
+/* label */
+.label {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+    -fx-font-size: $text-sm;
+
+    -fx-padding: 0 0 0 0;
+}
+
+/* menu, menubar, menuitem*/
+.menu-bar {
+    -fx-background-color: $bg;
+    -fx-text-fill: $fg;
+}
+
+.menu {
+   -fx-background-radius: $radius;
+    -fx-padding: 5px 6px;
+    -fx-background-color: $bg;
+}
+
+.navbar {
+    -fx-border-color: $fg;
+    -fx-border-width: 0 0 1 0;
+}
+
+.navbar-label {
+    -fx-font-size: $text-md;
+    -fx-text-fill: $fg;
+}
+
+
+.menu .label {
+    -fx-font-size: $text-md;
+    -fx-text-fill: lighten($fg, 23%);
+}
+
+.menu .label:hover {
+    -fx-text-fill: $fg;
+    -fx-background-color: transparent;
+}
+
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
+
+}
+
+.menu-item .label{
+    -fx-text-fill: $fg;
+    -fx-background-color: transparent;
+}
+
+.menu-item .label:hover{
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover {
+    -fx-background-color: darken($bg, 5%);
+}
+
+.menu-item:focused {
+    -fx-background-color: darken($bg, 5%);
+}
+
 
 

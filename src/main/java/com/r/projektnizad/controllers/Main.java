@@ -5,9 +5,13 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import net.synedra.validatorfx.TooltipWrapper;
 import net.synedra.validatorfx.Validator;
 
@@ -52,9 +56,9 @@ public class Main {
 
 
     table.setItems(FXCollections.observableArrayList(
-      new RowData("1", "2"),
-      new RowData("3", "4"),
-      new RowData("5", "6")
+            new RowData("1", "2"),
+            new RowData("3", "4"),
+            new RowData("5", "6")
     ));
 
     table.setRowFactory(
@@ -70,7 +74,7 @@ public class Main {
               row.contextMenuProperty().bind(
                       Bindings.when(row.emptyProperty())
                               .then((ContextMenu) null)
-                             .otherwise(rowMenu)
+                              .otherwise(rowMenu)
               );
               return row;
             });
@@ -89,15 +93,15 @@ public class Main {
             .decorates(input)
             .immediate();
 
-
-
     createProblemOutput();
   }
+
   private String getProblemText() {
     return validator.validationResultProperty().get().getMessages().stream()
             .map(msg -> msg.getSeverity().toString() + ": " + msg.getText())
             .collect(Collectors.joining("\n"));
   }
+
   private void createProblemOutput() {
     StringBinding problemsText = Bindings.createStringBinding(this::getProblemText, validator.validationResultProperty());
     problems.textProperty().bind(problemsText);
