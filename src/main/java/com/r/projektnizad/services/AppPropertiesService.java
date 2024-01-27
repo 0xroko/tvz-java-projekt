@@ -21,6 +21,7 @@ public class AppPropertiesService {
       properties.load(AppPropertiesService.class.getResourceAsStream(Navigator.baseResourcePath + APP_PROPERTIES_FILE));
     } catch (IOException e) {
       logger.error("[EXIT] Error while loading properties: " + e.getMessage(), e);
+      System.exit(1);
     }
   }
 

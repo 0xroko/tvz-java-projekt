@@ -14,6 +14,8 @@ module com.r.projektnizad {
   exports com.r.projektnizad.main;
   exports com.r.projektnizad.models;
   exports com.r.projektnizad.services;
+  exports com.r.projektnizad.util;
+  opens com.r.projektnizad.controllers.category to javafx.fxml;
   opens com.r.projektnizad.controllers to javafx.fxml;
   exports com.r.projektnizad.controllers;
   exports com.r.projektnizad.enums;

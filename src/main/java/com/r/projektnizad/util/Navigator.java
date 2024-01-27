@@ -1,6 +1,7 @@
 package com.r.projektnizad.util;
 
 import com.r.projektnizad.main.Main;
+import com.r.projektnizad.models.StoppableScene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -12,11 +13,15 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class Navigator {
-
   private static final Logger logger = LoggerFactory.getLogger(Navigator.class);
   static final public String baseResourcePath = "/com/r/projektnizad/";
-
   static public Stage rootStage;
+
+  public static void setController(Object controller) {
+    Navigator.controller = controller;
+  }
+
+  static Object controller;
 
   static void applyStyles(Scene scene) {
     // set stylesheet
@@ -25,13 +30,22 @@ public class Navigator {
   }
 
   static public void navigate(String resourcePath, String title) {
+    if (controller instanceof StoppableScene sc) {
+      sc.stop();
+    }
     try {
-      var window = (Parent) FXMLLoader.load(Objects.requireNonNull(Main.class.getResource(baseResourcePath + "fxml/" + resourcePath)));
+      FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Main.class.getResource(baseResourcePath + "fxml/" + resourcePath)));
+      var window = (Parent) loader.load();
       Scene scene = new Scene(window);
       applyStyles(scene);
-      rootStage.setScene(scene);
-      rootStage.setTitle(title);
-      rootStage.show();
+
+      // run stop method on previous view
+      if (rootStage != null) {
+        rootStage.setScene(scene);
+        rootStage.setTitle(title);
+        rootStage.show();
+
+      }
     } catch (IOException e) {
       logger.error("Error while loading window: " + resourcePath, e);
     }

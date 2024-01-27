@@ -4,14 +4,10 @@ import com.r.projektnizad.main.Main;
 import com.r.projektnizad.util.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-
-import java.io.File;
-import java.util.Objects;
 
 public class Menubar {
   public MenuBar menubar;
@@ -50,5 +46,13 @@ public class Menubar {
   }
 
   public void viewReservations(ActionEvent actionEvent) {
+  }
+
+  public void viewCategories(ActionEvent actionEvent) {
+    Navigator.navigate("category/view.fxml", "Kategorije");
+  }
+
+  public void addCategory(ActionEvent actionEvent) {
+    Navigator.navigate("category/add.fxml", "Dodaj kategoriju");
   }
 }
