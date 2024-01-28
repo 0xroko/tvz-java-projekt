@@ -17,7 +17,6 @@
             <MenuItem mnemonicParsing="false" onAction="#addItem" text="Dodaj"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" onAction="#viewCategories" text="Kategorije"/>
-            <MenuItem mnemonicParsing="false" onAction="#addCategory" text="Dodaj kategoriju"/>
         </Menu>
         <Menu mnemonicParsing="false" text="Rezervacije">
             <MenuItem mnemonicParsing="false" onAction="#viewReservations" text="Pretraga"/>

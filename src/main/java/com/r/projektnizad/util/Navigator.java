@@ -5,6 +5,7 @@ import com.r.projektnizad.models.StoppableScene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,25 +30,59 @@ public class Navigator {
     scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/fontstyle.css")).toExternalForm());
   }
 
-  static public void navigate(String resourcePath, String title) {
+  static public FXMLLoader load(String resourcePath) {
+    return new FXMLLoader(Objects.requireNonNull(Main.class.getResource(baseResourcePath + "fxml/" + resourcePath)));
+  }
+
+  static public Parent loadParent(String resourcePath) {
+    try {
+      return load(resourcePath).load();
+    } catch (IOException e) {
+      logger.error("Error loading resource: " + resourcePath);
+      return null;
+    }
+  }
+
+
+  static void runStopMethod() {
     if (controller instanceof StoppableScene sc) {
       sc.stop();
     }
-    try {
-      FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(Main.class.getResource(baseResourcePath + "fxml/" + resourcePath)));
-      var window = (Parent) loader.load();
-      Scene scene = new Scene(window);
-      applyStyles(scene);
+  }
 
-      // run stop method on previous view
-      if (rootStage != null) {
-        rootStage.setScene(scene);
-        rootStage.setTitle(title);
-        rootStage.show();
+  static public void navigate(String resourcePath, String title) {
+    runStopMethod();
 
-      }
-    } catch (IOException e) {
-      logger.error("Error while loading window: " + resourcePath, e);
+    var window = loadParent(resourcePath);
+    Scene scene = new Scene(window);
+    applyStyles(scene);
+
+    // run stop method on previous view
+    if (rootStage == null) {
+      logger.error("Root stage is not null");
+      return;
     }
+
+    rootStage.setScene(scene);
+    rootStage.setTitle(title);
+    rootStage.show();
+
+    rootStage.onHidingProperty().set(e -> {
+      runStopMethod();
+      System.exit(0);
+    });
+  }
+
+  static public <T extends Dialog<?>> void asDialog(String resourcePath, Dialog<?> controller) {
+    FXMLLoader l = load(resourcePath);
+    l.setController(controller);
+
+    try {
+      controller.getDialogPane().setContent(l.load());
+    } catch (IOException e) {
+      logger.error("Error loading resource: " + resourcePath);
+    }
+    applyStyles(controller.getDialogPane().getScene());
+
   }
 }

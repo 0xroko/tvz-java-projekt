@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 public class Main extends Application {
-
   public static final Logger logger = LoggerFactory.getLogger(Main.class);
-
   public static AuthService authService;
 
   @Override

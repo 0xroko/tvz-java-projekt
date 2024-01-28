@@ -76,7 +76,14 @@ public class CategoryDao implements Dao<Category> {
   }
 
   @Override
-  public void delete(Category category) {
+  public void delete(Long id) {
+    try (Connection conn = Database.connect()) {
+      PreparedStatement stmt = conn.prepareStatement("DELETE FROM category WHERE id = ?");
+      stmt.setLong(1, id);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      logger.error("Error while deleting category", e);
+    }
 
   }
 }

@@ -13,6 +13,6 @@ public interface Dao<T extends Entity> {
 
   void update(Long id, T t);
 
-  void delete(T t);
+  void delete(Long id);
 }
 
