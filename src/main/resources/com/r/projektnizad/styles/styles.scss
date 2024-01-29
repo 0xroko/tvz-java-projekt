@@ -143,10 +143,6 @@
   -fx-border-color: $error;
 }
 
-.title {
-  -fx-font-size: $text-lg;
-  -fx-text-fill: $fg;
-}
 
 /* label */
 .label {
@@ -155,6 +151,11 @@
   -fx-font-size: $text-sm;
 
   -fx-padding: 0 0 0 0;
+}
+
+.title {
+  -fx-font-size: $text-lg;
+  -fx-text-fill: $fg;
 }
 
 /* menu, menubar, menuitem*/

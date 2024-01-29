@@ -1,7 +1,7 @@
 package com.r.projektnizad.util;
 
 import com.r.projektnizad.main.Main;
-import com.r.projektnizad.models.StoppableScene;
+import com.r.projektnizad.models.CleanableScene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -44,14 +44,14 @@ public class Navigator {
   }
 
 
-  static void runStopMethod() {
-    if (controller instanceof StoppableScene sc) {
-      sc.stop();
+  static void cleanUpLastScene() {
+    if (controller instanceof CleanableScene sc) {
+      sc.cleanup();
     }
   }
 
   static public void navigate(String resourcePath, String title) {
-    runStopMethod();
+    cleanUpLastScene();
 
     var window = loadParent(resourcePath);
     Scene scene = new Scene(window);
@@ -68,7 +68,7 @@ public class Navigator {
     rootStage.show();
 
     rootStage.onHidingProperty().set(e -> {
-      runStopMethod();
+      cleanUpLastScene();
       System.exit(0);
     });
   }

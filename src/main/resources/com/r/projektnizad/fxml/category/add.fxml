@@ -6,7 +6,7 @@
       xmlns:fx="http://java.sun.com/JSP/Page"
 >
     <VBox alignment="CENTER_LEFT" maxWidth="300" spacing="20.0" VBox.vgrow="ALWAYS">
-        <Label fx:id="titleLabel" text="Dodaj kategoriju"/>
+        <Label fx:id="titleLabel" styleClass="title" text="Dodaj kategoriju"/>
         <VBox>
             <Label text="Ime kategorije"/>
             <TextField fx:id="nameInput"/>

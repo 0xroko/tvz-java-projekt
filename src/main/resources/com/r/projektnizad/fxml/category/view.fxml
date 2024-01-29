@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.r.projektnizad.util.CustomTableView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
 <VBox alignment="CENTER_LEFT" prefHeight="460.0" prefWidth="609.0" styleClass="container"
@@ -10,12 +11,12 @@
           styleClass="app-content">
         <Label text="Kategorije" styleClass="title"/>
         <Button onAction="#openAddCategory" text="Dodaj kategoriju"/>
-        <TableView fx:id="categoryTableView" prefHeight="435.0" prefWidth="500.0">
+        <CustomTableView fx:id="categoryTableView" prefHeight="435.0" prefWidth="500.0">
             <columns>
                 <TableColumn fx:id="idTableColumn" prefWidth="75.0" text="ID"/>
                 <TableColumn fx:id="nameTableColumn" prefWidth="106.0" text="Ime"/>
                 <TableColumn fx:id="descriptionTableColumn" minWidth="0.0" prefWidth="316.0" text="Opis"/>
             </columns>
-        </TableView>
+        </CustomTableView>
     </VBox>
 </VBox>
