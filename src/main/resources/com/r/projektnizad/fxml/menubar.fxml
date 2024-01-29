@@ -22,6 +22,9 @@
             <MenuItem mnemonicParsing="false" onAction="#viewReservations" text="Pretraga"/>
             <MenuItem mnemonicParsing="false" onAction="#addReservation" text="Dodaj"/>
         </Menu>
+        <Menu mnemonicParsing="false" text="Povijest promjena">
+            <MenuItem mnemonicParsing="false" onAction="#viewHistoryChanges" text="Pretraga"/>
+        </Menu>
     </MenuBar>
 
     <HBox fx:id="leading" alignment="CENTER_RIGHT" spacing="8.0" HBox.hgrow="ALWAYS">

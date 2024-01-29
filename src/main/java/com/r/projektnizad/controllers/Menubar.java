@@ -52,7 +52,8 @@ public class Menubar {
     Navigator.navigate("category/view.fxml", "Kategorije");
   }
 
-  public void addCategory(ActionEvent actionEvent) {
-    Navigator.navigate("category/add.fxml", "Dodaj kategoriju");
+
+  public void viewHistoryChanges(ActionEvent actionEvent) {
+    Navigator.navigate("history.fxml", "Povijest Promjena");
   }
 }
