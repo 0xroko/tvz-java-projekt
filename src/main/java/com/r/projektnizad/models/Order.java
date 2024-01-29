@@ -2,10 +2,11 @@ package com.r.projektnizad.models;
 
 import com.r.projektnizad.enums.OrderStatus;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Order extends Entity {
+public class Order extends Entity implements Serializable {
   private ArrayList<ItemOnOrder> itemsOnOrder;
   private Table table;
   private OrderStatus status;
@@ -52,5 +53,10 @@ public class Order extends Entity {
 
   public void setOrderTime(Date orderTime) {
     this.orderTime = orderTime;
+  }
+
+  @Override
+  public String getEntityName() {
+    return "narudžba";
   }
 }

@@ -7,28 +7,22 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
-import java.util.HexFormat;
 import java.util.Optional;
 
-public class User {
-
+public class User extends Entity implements Serializable {
   static Logger logger = LoggerFactory.getLogger(User.class);
-
-
-  private Long id;
   private String username;
-
   private UserPassword password;
-
   private UserType userType;
 
-  public Long getId() {
-    return id;
+  @Override
+  public String getEntityName() {
+    return "korisnik";
   }
+
 
   public String getUsername() {
     return username;
@@ -39,9 +33,9 @@ public class User {
   }
 
   public User(Long id, String username, UserPassword password, UserType userType) {
+    super(id);
     this.username = username;
     this.password = password;
-    this.id = id;
     this.userType = userType;
   }
 
@@ -54,7 +48,7 @@ public class User {
       KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
-      return  Optional.of(new UserPassword(hash, salt));
+      return Optional.of(new UserPassword(hash, salt));
     } catch (Exception e) {
       logger.error("Error while hashing password: " + e.getMessage());
     }
@@ -75,7 +69,7 @@ public class User {
 
   @Override
   public String toString() {
-    return id + ";" + username + ";" + password + ";" + userType.getCode();
+    return getId() + ";" + username + ";" + password + ";" + userType.getCode();
   }
 
   public static User fromString(String str) {

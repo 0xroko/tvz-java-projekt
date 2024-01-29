@@ -1,8 +1,9 @@
 package com.r.projektnizad.models;
 
+import java.io.Serializable;
 import java.util.HexFormat;
 
-public record UserPassword(byte[] hash, byte[] salt) {
+public record UserPassword(byte[] hash, byte[] salt) implements Serializable {
   @Override
   public String toString() {
     return HexFormat.of().formatHex(hash) + ":" + HexFormat.of().formatHex(salt);

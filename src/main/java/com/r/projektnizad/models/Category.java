@@ -1,6 +1,8 @@
 package com.r.projektnizad.models;
 
-public class Category extends Entity {
+import java.io.Serializable;
+
+public class Category extends Entity implements Serializable {
   private String name;
   private String description;
 
@@ -24,5 +26,10 @@ public class Category extends Entity {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  @Override
+  public String getEntityName() {
+    return "kategorija";
   }
 }

@@ -2,10 +2,11 @@ package com.r.projektnizad.models;
 
 import com.r.projektnizad.enums.ItemType;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Duration;
 
-public class Item extends Entity {
+public class Item extends Entity implements Serializable {
   private String name;
   private String description;
   private BigDecimal price;
@@ -89,5 +90,10 @@ public class Item extends Entity {
 
   public void setPreparationTime(Duration preparationTime) {
     this.preparationTime = preparationTime;
+  }
+
+  @Override
+  public String getEntityName() {
+    return "artikal";
   }
 }

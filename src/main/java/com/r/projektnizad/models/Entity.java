@@ -1,7 +1,11 @@
 package com.r.projektnizad.models;
 
-public abstract class Entity {
-  public Long id;
+import java.io.Serializable;
+
+public abstract class Entity implements Serializable {
+  private Long id;
+
+  public abstract String getEntityName();
 
   public Entity(Long id) {
     this.id = id;

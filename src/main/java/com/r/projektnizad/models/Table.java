@@ -1,6 +1,8 @@
 package com.r.projektnizad.models;
 
-public class Table extends Entity {
+import java.io.Serializable;
+
+public class Table extends Entity implements Serializable {
   private String name;
   private String description;
   private Long seats;
@@ -10,5 +12,10 @@ public class Table extends Entity {
     this.name = name;
     this.description = description;
     this.seats = seats;
+  }
+
+  @Override
+  public String getEntityName() {
+    return "stol";
   }
 }
