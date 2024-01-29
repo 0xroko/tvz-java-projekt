@@ -19,23 +19,24 @@ public class SignaledTaskThread<T> extends Thread {
 
   public SignaledTaskThread(Function<Void, T> fn) {
     this.fn = fn;
+    // set thread name
+    this.setName("SignaledTaskThread");
     this.start();
   }
 
   @Override
   public void run() {
     while (!Thread.currentThread().isInterrupted()) {
-      synchronized (lock) {
-        try {
-          while (!taskPending) {
+      try {
+        while (!taskPending) {
+          synchronized (lock) {
             lock.wait();
           }
-          // Execute your task here
-          resultProperty.set(fn.apply(null));
-          taskPending = false;
-        } catch (InterruptedException e) {
-          Thread.currentThread().interrupt();
         }
+        resultProperty.set(fn.apply(null));
+        taskPending = false;
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
       }
     }
     logger.info("Thread ended");

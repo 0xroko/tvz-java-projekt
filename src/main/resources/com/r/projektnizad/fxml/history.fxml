@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.r.projektnizad.util.CustomTableView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<VBox alignment="CENTER_LEFT" prefHeight="460.0" prefWidth="609.0" styleClass="container"
+      xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.r.projektnizad.controllers.History">
+    <fx:include source="menubar.fxml"/>
+    <VBox alignment="CENTER_LEFT" prefHeight="405.0" prefWidth="500.0" spacing="20.0" VBox.vgrow="ALWAYS"
+          styleClass="app-content">
+        <Label text="Povijest izmjena" styleClass="title"/>
+        <CustomTableView fx:id="historyTableView" prefHeight="435.0" prefWidth="500.0">
+            <columns>
+                <TableColumn fx:id="entityNameTableColumn" prefWidth="106.0" text="Enitet"/>
+                <TableColumn fx:id="dateTableColumn" prefWidth="75.0" text="Datum"/>
+                <TableColumn fx:id="userTableColumn" prefWidth="75.0" text="Korisnik"/>
+                <TableColumn fx:id="typeTableColumn" prefWidth="75.0" text="Vrsta"/>
+                <TableColumn fx:id="descriptionTableColumn" minWidth="0.0" prefWidth="316.0" text="Opis"/>
+            </columns>
+        </CustomTableView>
+    </VBox>
+</VBox>
