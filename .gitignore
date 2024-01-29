@@ -37,6 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 
-/db/*
+db/
+logs/
+data/
+
 d.txt
-/logs/*

@@ -14,13 +14,16 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.r.projektnizad.util.Config.BASE_DATA_PATH;
+
 /**
  * Load list of users from file and provide methods for authentication.
  */
 public class AuthService {
 
   private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
-  static final private String USER_FILE = "users.txt";
+  static final private String USER_FILE = BASE_DATA_PATH + "users.txt";
+
   private final Set<User> users = new HashSet<>();
   private Optional<User> currentUser;
 
