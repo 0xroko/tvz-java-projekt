@@ -1,10 +1,25 @@
 @font-face {
+    font-family: 'SF Pro Text SemiBold';
+    src: url('fonts/SF-Pro-Text-Semibold.otf');
+}
+
+@font-face {
+    font-family: 'SF Pro Text Medium';
+    src: url('fonts/SF-Pro-Text-Medium.otf');
+}
+
+@font-face {
+    font-family: 'SF Pro Text Regular';
+    src: url('fonts/SF-Pro-Text-Regular.otf');
+}
+
+@font-face {
     font-family: 'SF Mono Medium';
     src: url('fonts/SFMono-Medium.otf');
 }
 
-
-.root {
-    -fx-font-family: 'SF Mono Medium';
-
+@font-face {
+    font-family: 'SF Mono Bold';
+    src: url('fonts/SFMono-Bold.otf');
 }
+
