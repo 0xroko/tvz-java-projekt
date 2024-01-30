@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<HBox styleClass="navbar" prefHeight="26.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
+
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<HBox prefHeight="26.0"  xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.r.projektnizad.controllers.Menubar">
     <MenuBar fx:id="menubar">
-        <Menu mnemonicParsing="false" text="Narudžbe">
-            <MenuItem mnemonicParsing="false" onAction="#viewOrders" text="Pretraga"/>
-            <MenuItem mnemonicParsing="false" onAction="#addOrder" text="Dodaj"/>
+        <Menu  text="Narudžbe">
+            <MenuItem  onAction="#viewOrders" text="Pretraga"/>
+            <MenuItem  onAction="#addOrder" text="Dodaj"/>
         </Menu>
-        <Menu mnemonicParsing="false" text="Artikli">
-            <MenuItem mnemonicParsing="false" onAction="#viewItems" text="Pretraga"/>
-            <MenuItem mnemonicParsing="false" onAction="#addItem" text="Dodaj"/>
-            <SeparatorMenuItem mnemonicParsing="false"/>
-            <MenuItem mnemonicParsing="false" onAction="#viewCategories" text="Kategorije"/>
+        <Menu  text="Artikli">
+            <MenuItem  onAction="#viewItems" text="Pretraga"/>
+            <MenuItem  onAction="#addItem" text="Dodaj"/>
+            <SeparatorMenuItem />
+            <MenuItem  onAction="#viewCategories" text="Kategorije"/>
         </Menu>
-        <Menu mnemonicParsing="false" text="Rezervacije">
-            <MenuItem mnemonicParsing="false" onAction="#viewReservations" text="Pretraga"/>
-            <MenuItem mnemonicParsing="false" onAction="#addReservation" text="Dodaj"/>
+        <Menu  text="Rezervacije">
+            <MenuItem  onAction="#viewReservations" text="Pretraga"/>
+            <MenuItem  onAction="#addReservation" text="Dodaj"/>
         </Menu>
-        <Menu mnemonicParsing="false" text="Povijest promjena">
-            <MenuItem mnemonicParsing="false" onAction="#viewHistoryChanges" text="Pretraga"/>
+        <Menu  text="Povijest promjena">
+            <MenuItem  onAction="#viewHistoryChanges" text="Pretraga"/>
         </Menu>
     </MenuBar>
-
-    <HBox fx:id="leading" alignment="CENTER_RIGHT" spacing="8.0" HBox.hgrow="ALWAYS">
-        <Label styleClass="navbar-label" fx:id="userNameLabel" text=""/>
-        <ImageView fx:id="logout" fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-            <Image url="@../img/sign-out.png"/>
-        </ImageView>
-        <padding>
-            <Insets right="7.0"/>
-        </padding>
-    </HBox>
+    <HBox   alignment="CENTER_RIGHT" styleClass="menu-bar"  spacing="8.0" HBox.hgrow="ALWAYS"/>
+    <MenuBar>
+        <Menu fx:id="logoutMenu"  text="ADMIN">
+            <MenuItem  onAction="#logout" text="Logout">
+                <graphic>
+                    <FontIcon iconLiteral="fth-log-out" iconSize="14"/>
+                </graphic>
+            </MenuItem>
+        </Menu>
+    </MenuBar>
 </HBox>

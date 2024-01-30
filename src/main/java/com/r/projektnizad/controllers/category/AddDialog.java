@@ -31,11 +31,11 @@ public class AddDialog extends Dialog<Category> {
     }
 
     setResultConverter(buttonType -> {
-      Category category = new Category(null, nameInput.getText(), descriptionInput.getText());
+      Long id = isEdit ? editCategory.get().getId() : null;
+      Category category = new Category(id, nameInput.getText(), descriptionInput.getText());
       if (buttonType == CustomButtonTypes.EDIT) {
         ButtonType confirm = new AppDialog().showConfirmationMessage("Uredi kategoriju", "Da li ste sigurni da želite urediti kategoriju?", CustomButtonTypes.EDIT);
         if (confirm == ButtonType.CANCEL) return null;
-
         return category;
       }
 

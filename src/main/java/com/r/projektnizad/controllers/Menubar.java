@@ -5,29 +5,22 @@ import com.r.projektnizad.util.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class Menubar {
   public MenuBar menubar;
-  public HBox leading;
-  public Label userNameLabel;
-  public ImageView logout;
+  public Menu logoutMenu;
 
   @FXML
   void initialize() {
-
-    /*add loged username and logout button */
     String username = Main.authService.getCurrentUser().get().getUsername();
-    userNameLabel.setText(username);
-
-    /*logout */
-    logout.setOnMouseClicked(event -> {
-      Main.authService.logout();
-      Navigator.navigate("login.fxml", "Prijava");
-    });
-
+    logoutMenu.setText(username);
   }
 
   public void viewOrders(ActionEvent actionEvent) {
@@ -55,5 +48,10 @@ public class Menubar {
 
   public void viewHistoryChanges(ActionEvent actionEvent) {
     Navigator.navigate("history.fxml", "Povijest Promjena");
+  }
+
+  public void logout(ActionEvent actionEvent) {
+    Main.authService.logout();
+    Navigator.navigate("login.fxml", "Prijava");
   }
 }

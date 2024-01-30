@@ -22,12 +22,15 @@ public class Navigator {
     Navigator.controller = controller;
   }
 
+  public static ThemeManager themeManager = new ThemeManager();
+
+
   static Object controller;
 
   static void applyStyles(Scene scene) {
     // set stylesheet
-    scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/styles.css")).toExternalForm());
-    scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/fontstyle.css")).toExternalForm());
+   // scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/styles.css")).toExternalForm());
+  //  scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/fontstyle.css")).toExternalForm());
   }
 
   static public FXMLLoader load(String resourcePath) {
@@ -53,6 +56,7 @@ public class Navigator {
   static public void navigate(String resourcePath, String title) {
     cleanUpLastScene();
 
+
     var window = loadParent(resourcePath);
     Scene scene = new Scene(window);
     applyStyles(scene);
@@ -63,6 +67,7 @@ public class Navigator {
       return;
     }
 
+    themeManager.setScene(scene);
     rootStage.setScene(scene);
     rootStage.setTitle(title);
     rootStage.show();
