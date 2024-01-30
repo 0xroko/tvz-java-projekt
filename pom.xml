@@ -80,7 +80,26 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>3.3.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-styles</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-feather-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -136,53 +155,6 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.gitlab.haynes</groupId>
-                <artifactId>libsass-maven-plugin</artifactId>
-                <version>0.3.1</version>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <inputPath>${basedir}/src/main/resources</inputPath>
-                    <outputPath>${project.build.directory}/generated-sources/resources</outputPath>
-                    <!--<includePath>${basedir}/src/sass-plugins/</includePath>-->
-                    <outputStyle>nested</outputStyle>
-                    <generateSourceComments>false</generateSourceComments>
-                    <generateSourceMap>false</generateSourceMap>
-                    <sourceMapOutputPath>${project.build.directory}/generated-sources/resources
-                    </sourceMapOutputPath>
-                    <embedSourceContentsInSourceMap>false</embedSourceContentsInSourceMap>
-                    <precision>5</precision>
-                    <enableClasspathAwareImporter>true</enableClasspathAwareImporter>
-                    <copySourceToOutput>false</copySourceToOutput>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.directory}/generated-sources/resources</directory>
-                                </resource>
-                            </resources>
                         </configuration>
                     </execution>
                 </executions>
