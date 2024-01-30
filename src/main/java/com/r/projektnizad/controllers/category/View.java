@@ -1,5 +1,6 @@
 package com.r.projektnizad.controllers.category;
 
+import atlantafx.base.controls.ModalPane;
 import com.r.projektnizad.dao.CategoryDao;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.CleanableScene;
@@ -9,13 +10,13 @@ import com.r.projektnizad.models.history.ModifyChange;
 import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.threads.SignaledTaskThread;
 import com.r.projektnizad.util.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,9 @@ public class View implements CleanableScene {
 
     signaledTaskThread.resultProperty().addListener((observable, oldValue, newValue) -> {
       categoryTableView.setItems(newValue);
+      Platform.runLater(() -> {
+        categoryTableView.autoResizeColumns();
+      });
     });
 
     signaledTaskThread.signal();

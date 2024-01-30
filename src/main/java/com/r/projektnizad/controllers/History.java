@@ -104,48 +104,9 @@ public class History {
   void search() {
     historyTableView.getItems().clear();
     historyTableView.getItems().addAll(filter(currentChanges));
-    autoResizeColumns(historyTableView);
+    historyTableView.autoResizeColumns();
   }
 
-  public static void autoResizeColumns( TableView<?> table )
-  {
-    //Set the right policy
-    table.setColumnResizePolicy( TableView.UNCONSTRAINED_RESIZE_POLICY);
-    table.getColumns().stream().forEach( (column) ->
-    {
-      //Minimal width = columnheader
-      Text t = new Text( column.getText());
-      double max = t.getLayoutBounds().getWidth();
-      for ( int i = 0; i < table.getItems().size(); i++ )
-      {
-        //cell must not be empty
-        if ( column.getCellData( i ) != null )
-        {
-          t = new Text( column.getCellData( i ).toString() );
-          double calcwidth = t.getLayoutBounds().getWidth();
-          //remember new max-width
-          if ( calcwidth > max )
-          {
-            max = calcwidth;
-          }
-        }
-      }
-      //set the new max-widht with some extra space
-      column.setPrefWidth( max + 40.0d );
-    } );
-
-
-    // if last column is too small, stretch it
-    TableColumn<?, ?> lastColumn = table.getColumns().get(table.getColumns().size() - 1);
-    double totalWidth = 0.0d;
-    for (TableColumn<?, ?> column : table.getColumns()) {
-      totalWidth += column.getWidth();
-    }
-    if (totalWidth < table.getWidth()) {
-      lastColumn.setPrefWidth(lastColumn.getPrefWidth() + table.getWidth() - totalWidth - 20.0d);
-    }
-
-  }
 
   public void initialize() {
     dateTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))));

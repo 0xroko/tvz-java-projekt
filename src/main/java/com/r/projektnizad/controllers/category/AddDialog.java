@@ -14,7 +14,6 @@ import java.util.Optional;
 public class AddDialog extends Dialog<Category> {
   public TextField descriptionInput;
   public TextField nameInput;
-
   public Label titleLabel;
 
   public AddDialog(Optional<Category> editCategory) {
