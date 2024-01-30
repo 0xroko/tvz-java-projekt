@@ -1,5 +1,6 @@
 package com.r.projektnizad.services;
 
+import com.r.projektnizad.exceptions.HistoryEntryNotFound;
 import com.r.projektnizad.models.Entity;
 import com.r.projektnizad.models.history.Change;
 import org.slf4j.Logger;
@@ -45,26 +46,23 @@ public class HistoryChangeService {
     return Path.of(HISTORY_DIRECTORY, fileName);
   }
 
-  private <T extends Entity> ArrayList<Change<T>> read(ObjectInputStream in) {
-    try {
-      Object obj = in.readObject();
-      if (obj instanceof ArrayList) {
-        return (ArrayList<Change<T>>) obj;
-      }
-    } catch (EOFException e) {
-      logger.info("History file is empty");
-    } catch (IOException | ClassNotFoundException e) {
-      logger.error("Error reading history file", e);
+  private <T extends Entity> ArrayList<Change<T>> read(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    Object obj = in.readObject();
+    if (obj instanceof ArrayList) {
+      return (ArrayList<Change<T>>) obj;
     }
     return new ArrayList<>();
   }
 
-  public <T extends Entity> Optional<ArrayList<Change<T>>> readChanges(Date date) {
+  public <T extends Entity> Optional<ArrayList<Change<T>>> readChanges(Date date) throws HistoryEntryNotFound {
     Path historyFile = getHistoryFile(date);
     lock.readLock().lock();
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(historyFile.toFile()))) {
       return Optional.of(read(ois));
-    } catch (IOException e) {
+    } catch (FileNotFoundException e) {
+      logger.info("History file not found");
+      throw new HistoryEntryNotFound();
+    } catch (IOException | ClassNotFoundException e) {
       logger.error("Error reading history file", e);
     } finally {
       lock.readLock().unlock();
@@ -81,9 +79,11 @@ public class HistoryChangeService {
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(historyFile.toFile()))) {
       changes = read(ois);
     } catch (FileNotFoundException e) {
-      logger.info("History file not found", e);
+      logger.info("History file not found");
     } catch (IOException e) {
       logger.error("Error reading history file", e);
+    } catch (ClassNotFoundException e) {
+      logger.error("Looks like history file is corrupted", e);
     }
 
     try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(historyFile.toFile(), false))) {

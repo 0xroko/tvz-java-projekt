@@ -1,23 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.r.projektnizad.util.CustomTableView?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<VBox alignment="CENTER_LEFT" prefHeight="460.0" prefWidth="609.0" styleClass="container"
-      xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.r.projektnizad.controllers.History">
-    <fx:include source="menubar.fxml"/>
-    <VBox alignment="CENTER_LEFT" prefHeight="405.0" prefWidth="500.0" spacing="20.0" VBox.vgrow="ALWAYS"
-          styleClass="app-content">
-        <Label text="Povijest izmjena" styleClass="title"/>
-        <CustomTableView fx:id="historyTableView" prefHeight="435.0" prefWidth="500.0">
+
+<VBox prefHeight="890.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.r.projektnizad.controllers.History">
+    <fx:include source="menubar.fxml" />
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <VBox.margin>
+            <Insets left="16.0" right="16.0" top="16.0" />
+        </VBox.margin>
+        <Label styleClass="title-2" text="Povijest izmjena" />
+        <HBox spacing="16.0" GridPane.rowIndex="1">
+            <padding>
+                <Insets bottom="16.0" top="16.0" />
+            </padding>
+            <VBox>
+                <Label text="Datum" />
+                <DatePicker fx:id="filterDatePicker" />
+            </VBox>
+            <VBox>
+                <Label text="Entitet" />
+                <ComboBox fx:id="entityFilterCombobox" prefWidth="150.0" />
+            </VBox>
+            <VBox>
+                <Label text="Korsnik" />
+                <ComboBox fx:id="userFilterComboBox" prefWidth="150.0" />
+            </VBox>
+        </HBox>
+        <CustomTableView fx:id="historyTableView" prefHeight="435.0" prefWidth="657.0" styleClass="dense" GridPane.rowIndex="2">
             <columns>
-                <TableColumn fx:id="entityNameTableColumn" prefWidth="106.0" text="Enitet"/>
-                <TableColumn fx:id="dateTableColumn" prefWidth="75.0" text="Datum"/>
-                <TableColumn fx:id="userTableColumn" prefWidth="75.0" text="Korisnik"/>
-                <TableColumn fx:id="typeTableColumn" prefWidth="75.0" text="Vrsta"/>
-                <TableColumn fx:id="descriptionTableColumn" minWidth="0.0" prefWidth="316.0" text="Opis"/>
+                <TableColumn fx:id="entityNameTableColumn" prefWidth="120.0" text="Enitet" />
+                <TableColumn fx:id="idTableColumn" prefWidth="90.0" text="ID" />
+                <TableColumn fx:id="dateTableColumn" prefWidth="124.0" text="Datum" />
+                <TableColumn fx:id="userTableColumn" prefWidth="141.0" text="Korisnik" />
+                <TableColumn fx:id="typeTableColumn" prefWidth="208.0" text="Vrsta" />
+                <TableColumn fx:id="descriptionTableColumn" minWidth="0.0" prefWidth="609.0" text="Opis" />
             </columns>
         </CustomTableView>
-    </VBox>
+    </GridPane>
 </VBox>
