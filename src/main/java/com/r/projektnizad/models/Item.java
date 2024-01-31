@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Duration;
 
-public class Item extends Entity implements Serializable {
+public class Item extends Entity implements Serializable, Cloneable {
   private String name;
   private String description;
   private BigDecimal price;
@@ -95,5 +95,14 @@ public class Item extends Entity implements Serializable {
   @Override
   public String getEntityName() {
     return "artikal";
+  }
+
+  @Override
+  public Item clone() {
+    try {
+      return (Item) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

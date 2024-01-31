@@ -30,6 +30,7 @@ public class Menubar {
   }
 
   public void viewItems(ActionEvent actionEvent) {
+    Navigator.navigate("item/view.fxml", "Artikli");
   }
 
   public void addItem(ActionEvent actionEvent) {

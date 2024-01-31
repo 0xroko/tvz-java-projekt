@@ -1,6 +1,5 @@
 package com.r.projektnizad.controllers.category;
 
-import atlantafx.base.controls.ModalPane;
 import com.r.projektnizad.dao.CategoryDao;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.CleanableScene;
@@ -16,7 +15,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyEvent;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ public class View implements CleanableScene {
   public TableColumn<Category, Long> idTableColumn;
   private final CategoryDao categoryDao = new CategoryDao();
   public CustomTableView<Category> categoryTableView;
-  private final SignaledTaskThread<List<Category>> signaledTaskThread = new SignaledTaskThread<>((v) -> categoryDao.getAll());
+  private final SignaledTaskThread<List<Category>, Map<String, String>> signaledTaskThread = new SignaledTaskThread<>((v) -> categoryDao.getAll());
 
   @FXML
   private void initialize() {
@@ -91,4 +90,5 @@ public class View implements CleanableScene {
     });
 
   }
+
 }
