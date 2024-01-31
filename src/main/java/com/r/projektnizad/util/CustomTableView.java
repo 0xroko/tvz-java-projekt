@@ -1,6 +1,7 @@
 package com.r.projektnizad.util;
 
 import javafx.application.Platform;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.text.Text;
@@ -8,24 +9,42 @@ import javafx.scene.text.Text;
 import java.util.List;
 
 public class CustomTableView<T> extends TableView<T> {
-  private int lastModifiedIndex = 0;
+  private Number lastScrollOffset = 0;
+  private ScrollBar scrollBar;
+  private boolean currentlyCleaning = false;
 
   public CustomTableView() {
     super();
+
+    Platform.runLater(() -> {
+      scrollBar = (ScrollBar) this.lookup(".scroll-bar:vertical");
+      scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+        if (currentlyCleaning) {
+          return;
+        }
+
+        lastScrollOffset = newValue;
+      });
+    });
   }
 
   public void setItems(List<T> items) {
+    currentlyCleaning = true;
     this.getItems().clear();
     this.getItems().addAll(items);
-    Platform.runLater(() -> this.scrollTo(lastModifiedIndex));
+    Platform.runLater(() -> {
+      this.scrollBar.setValue(lastScrollOffset.doubleValue());
+      currentlyCleaning = false;
+    });
+
   }
 
-  public int getLastModifiedIndex() {
-    return lastModifiedIndex;
+  public int getLastScrollOffset() {
+    return lastScrollOffset.intValue();
   }
 
-  public void setLastModifiedIndex(int lastModifiedIndex) {
-    this.lastModifiedIndex = lastModifiedIndex;
+  public void setLastScrollOffset(int lastScrollOffset) {
+    this.lastScrollOffset = lastScrollOffset;
   }
 
   public void autoResizeColumns() {
