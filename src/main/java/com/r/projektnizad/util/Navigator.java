@@ -29,8 +29,8 @@ public class Navigator {
 
   static void applyStyles(Scene scene) {
     // set stylesheet
-   // scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/styles.css")).toExternalForm());
-  //  scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/fontstyle.css")).toExternalForm());
+    // scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/styles.css")).toExternalForm());
+    //  scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/fontstyle.css")).toExternalForm());
   }
 
   static public FXMLLoader load(String resourcePath) {
@@ -82,10 +82,13 @@ public class Navigator {
     FXMLLoader l = load(resourcePath);
     l.setController(controller);
 
+    controller.setWidth(Config.WINDOW_WIDTH);
+    controller.setHeight(Config.WINDOW_HEIGHT);
+
     try {
       controller.getDialogPane().setContent(l.load());
     } catch (IOException e) {
-      logger.error("Error loading resource: " + resourcePath);
+      logger.error("Error loading resource: " + resourcePath, e);
     }
     applyStyles(controller.getDialogPane().getScene());
 
