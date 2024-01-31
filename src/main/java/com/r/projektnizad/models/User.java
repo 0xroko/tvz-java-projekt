@@ -76,4 +76,16 @@ public class User extends Entity implements Serializable {
     String[] parts = str.split(";");
     return new User(Long.parseLong(parts[0]), parts[1], UserPassword.fromString(parts[2]), UserType.fromCode(Integer.parseInt(parts[3])));
   }
+
+  public void setUsername(String username) {
+    this.username = username;
+  }
+
+  public UserType getUserType() {
+    return userType;
+  }
+
+  public void setUserType(UserType userType) {
+    this.userType = userType;
+  }
 }

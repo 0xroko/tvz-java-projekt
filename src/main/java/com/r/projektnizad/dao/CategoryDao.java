@@ -3,12 +3,14 @@ package com.r.projektnizad.dao;
 import com.r.projektnizad.db.Database;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.Dao;
+import com.r.projektnizad.util.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class CategoryDao implements Dao<Category> {
@@ -34,7 +36,6 @@ public class CategoryDao implements Dao<Category> {
     }
     return categories;
   }
-
 
   private Category mapToCategory(ResultSet rs) throws SQLException {
     var id = rs.getLong("id");
@@ -85,5 +86,10 @@ public class CategoryDao implements Dao<Category> {
       logger.error("Error while deleting category", e);
     }
 
+  }
+
+  @Override
+  public List<Category> filter(Map<String, Filter.FilterItem> filters) {
+    return null;
   }
 }

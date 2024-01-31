@@ -2,7 +2,7 @@ package com.r.projektnizad.models;
 
 import java.io.Serializable;
 
-public class Category extends Entity implements Serializable {
+public class Category extends Entity implements Serializable, Cloneable {
   private String name;
   private String description;
 
@@ -31,5 +31,14 @@ public class Category extends Entity implements Serializable {
   @Override
   public String getEntityName() {
     return "kategorija";
+  }
+
+  @Override
+  public Category clone() {
+    try {
+      return (Category) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

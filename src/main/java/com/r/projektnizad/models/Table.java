@@ -18,4 +18,28 @@ public class Table extends Entity implements Serializable {
   public String getEntityName() {
     return "stol";
   }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public Long getSeats() {
+    return seats;
+  }
+
+  public void setSeats(Long seats) {
+    this.seats = seats;
+  }
 }

@@ -1,10 +1,10 @@
 package com.r.projektnizad.enums;
 
 public enum UserType {
-  ADMIN(0,"Admin"),
-  MANAGER(1,"Manager"),
-  WAITER(2,"Waiter"),
-  COOK(3,"Cook");
+  ADMIN(0, "Admin"),
+  MANAGER(1, "Menadžer"),
+  WAITER(2, "Konobar"),
+  COOK(3, "Kuhar");
 
   private final String name;
 
@@ -18,7 +18,7 @@ public enum UserType {
 
   private final Integer code;
 
-  UserType(Integer code,String name) {
+  UserType(Integer code, String name) {
     this.code = code;
     this.name = name;
   }

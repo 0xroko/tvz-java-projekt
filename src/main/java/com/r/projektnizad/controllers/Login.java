@@ -23,8 +23,8 @@ public class Login {
   public TextField usernameInput;
   public PasswordField passwordInput;
 
-  private  ControlClassSetter userNameErrorClassSetter;
-  private  ControlClassSetter passwordErrorClassSetter;
+  private ControlClassSetter userNameErrorClassSetter;
+  private ControlClassSetter passwordErrorClassSetter;
 
   @FXML
   void initialize() {
@@ -62,7 +62,6 @@ public class Login {
     userNameErrorClassSetter.unset();
     passwordErrorClassSetter.unset();
     usernameInput.setText("");
-    passwordInput.setText("");
   }
 
   @FXML
@@ -71,6 +70,8 @@ public class Login {
     if (!valid) {
       return;
     }
+
+    // TODO ERRORS
     boolean loggedIn = Main.authService.authenticate(usernameInput.getText(), passwordInput.getText());
     if (loggedIn) {
       logger.info("User " + usernameInput.getText() + " logged in.");
