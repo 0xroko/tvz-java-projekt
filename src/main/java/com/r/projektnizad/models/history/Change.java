@@ -14,6 +14,8 @@ public abstract class Change<T extends Entity> implements Serializable {
   LocalDateTime dateTime;
   User user;
 
+  public final Long serialVersionUID = 9043873L;
+
   public Change(T oldEntity, T newEntity) {
     this.oldEntity = oldEntity;
     this.newEntity = newEntity;
@@ -22,6 +24,10 @@ public abstract class Change<T extends Entity> implements Serializable {
   }
 
   public Map<String, String> diff() {
+    return diff(false, "");
+  }
+
+  public Map<String, String> diff(boolean onlyName, String prefix) {
     Map<String, String> diff = new HashMap<>();
 
     if (oldEntity == null) {
@@ -41,7 +47,21 @@ public abstract class Change<T extends Entity> implements Serializable {
       try {
         Object oldValue = field.get(oldEntity);
         Object newValue = field.get(newEntity);
+        if (onlyName && !field.getName().equals("name")) continue;
         if (!oldValue.equals(newValue)) {
+          // if values are not primitive types, recursively call diff
+          if (oldValue instanceof Entity) {
+            if (newValue == null) continue;
+            String entityName = ((Entity) oldValue).getEntityName();
+            diff.putAll(((Change<?>) new ModifyChange<>((Entity) oldValue, (Entity) newValue)).diff(true, prefix + entityName + " "));
+            continue;
+          }
+
+          if (onlyName) {
+            diff.put(prefix, oldValue + " -> " + newValue);
+            continue;
+          }
+
           diff.put(field.getName(), oldValue + " -> " + newValue);
         }
       } catch (IllegalAccessException e) {
