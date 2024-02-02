@@ -1,8 +1,11 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
+
 import java.io.Serializable;
 
 public abstract class Entity implements Serializable {
+  @NamedHistoryMember("Identifikator")
   private Long id;
 
   public abstract String getEntityName();

@@ -1,9 +1,13 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
+
 import java.io.Serializable;
 
 public class Category extends Entity implements Serializable, Cloneable {
+  @NamedHistoryMember("Naziv")
   private String name;
+  @NamedHistoryMember("Opis")
   private String description;
 
   public Category(Long id, String name, String description) {
