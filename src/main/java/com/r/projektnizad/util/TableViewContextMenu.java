@@ -14,9 +14,7 @@ public class TableViewContextMenu {
     ContextMenu contextMenu = new ContextMenu();
     actions.forEach((name, action) -> {
       MenuItem menuItem = new MenuItem(name);
-      menuItem.setOnAction(event1 -> {
-        action.accept(row.getItem());
-      });
+      menuItem.setOnAction(event1 -> action.accept(row.getItem()));
       contextMenu.getItems().add(menuItem);
     });
 

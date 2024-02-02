@@ -5,9 +5,9 @@ import com.r.projektnizad.dao.ItemDao;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.CleanableScene;
 import com.r.projektnizad.models.Item;
-import com.r.projektnizad.models.history.AddChange;
-import com.r.projektnizad.models.history.DeleteChange;
-import com.r.projektnizad.models.history.ModifyChange;
+import com.r.projektnizad.models.change.AddChange;
+import com.r.projektnizad.models.change.DeleteChange;
+import com.r.projektnizad.models.change.ModifyChange;
 import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.threads.SignaledTaskThread;
 import com.r.projektnizad.util.*;
@@ -49,7 +49,7 @@ public class View implements CleanableScene {
       if (newValue.isEmpty()) {
         filterMap.remove("item.name");
       } else {
-        filterMap.put("item.name", new Filter.FilterItem(newValue, true));
+        filterMap.put("item.name", new Filter.FilterItem(newValue, Filter.FilterType.LIKE));
       }
       refresh();
     });
@@ -58,16 +58,14 @@ public class View implements CleanableScene {
       if (newValue == null || newValue.getName().equals("Sve")) {
         filterMap.remove("item.category_id");
       } else {
-        filterMap.put("item.category_id", new Filter.FilterItem(String.valueOf(newValue.getId()), false));
+        filterMap.put("item.category_id", new Filter.FilterItem(String.valueOf(newValue.getId()), Filter.FilterType.EQUAL));
       }
       refresh();
     });
 
     categorySearchComboBox.setItems(FXCollections.observableArrayList(new CategoryDao().getAll()));
     categorySearchComboBox.getItems().addFirst(new Category(-1L, "Sve", "Sve kategorije"));
-    categorySearchComboBox.setCellFactory(param -> Util.getComboBoxListCell(Category::getName));
-    categorySearchComboBox.setButtonCell(Util.getComboBoxListCell(Category::getName));
-
+    Util.comboBoxCellFactorySetters(categorySearchComboBox, Category::getName);
 
     idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getId()).asObject());
     nameTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
@@ -75,7 +73,7 @@ public class View implements CleanableScene {
     stockTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getStock()).asObject());
     categoryTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory().getName()));
     descriptionTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
-    
+
     preparationTimeTableColumn.setCellValueFactory(cellData -> {
       if (cellData.getValue().getPreparationTime().equals(Duration.ZERO)) {
         return new SimpleStringProperty("ODMAH");
@@ -83,17 +81,15 @@ public class View implements CleanableScene {
       return new SimpleStringProperty(Util.formatDuration(cellData.getValue().getPreparationTime()));
     });
 
-    signaledTaskThread.resultProperty().addListener((observable, oldValue, newValue) -> {
+    signaledTaskThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
       itemTableView.setItems(newValue);
       itemTableView.autoResizeColumns();
-
     });
 
-    Map<String, Consumer<Item>> actions = Map.of(
-            "Dopuni zalihe", this::stockReplenish,
-            "Izmjeni", this::edit,
-            "Obriši", this::delete
-    );
+    Map<String, Consumer<Item>> actions = new LinkedHashMap<>();
+    actions.put("Povećaj zalihe", this::stockReplenish);
+    actions.put("Izmijeni", this::edit);
+    actions.put("Obriši", this::delete);
 
     itemTableView.setRowFactory(tableView -> {
       TableRow<Item> row = new TableRow<>();

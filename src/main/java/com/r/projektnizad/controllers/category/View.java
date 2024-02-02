@@ -3,20 +3,19 @@ package com.r.projektnizad.controllers.category;
 import com.r.projektnizad.dao.CategoryDao;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.CleanableScene;
-import com.r.projektnizad.models.history.AddChange;
-import com.r.projektnizad.models.history.DeleteChange;
-import com.r.projektnizad.models.history.ModifyChange;
+import com.r.projektnizad.models.change.AddChange;
+import com.r.projektnizad.models.change.DeleteChange;
+import com.r.projektnizad.models.change.ModifyChange;
 import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.threads.SignaledTaskThread;
 import com.r.projektnizad.util.*;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,10 +36,9 @@ public class View implements CleanableScene {
     nameTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
     descriptionTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescription()));
 
-    Map<String, Consumer<Category>> actions = Map.of(
-            "Izmjeni", this::edit,
-            "Obriši", this::delete
-    );
+    Map<String, Consumer<Category>> actions = new LinkedHashMap<>();
+    actions.put("Uredi", this::edit);
+    actions.put("Obriši", this::delete);
 
     categoryTableView.setRowFactory(tableView -> {
       TableRow<Category> row = new TableRow<>();
@@ -48,11 +46,9 @@ public class View implements CleanableScene {
       return row;
     });
 
-    signaledTaskThread.resultProperty().addListener((observable, oldValue, newValue) -> {
+    signaledTaskThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
       categoryTableView.setItems(newValue);
-      Platform.runLater(() -> {
-        categoryTableView.autoResizeColumns();
-      });
+      categoryTableView.autoResizeColumns();
     });
 
     signaledTaskThread.signal();
@@ -62,6 +58,7 @@ public class View implements CleanableScene {
     var editDialog = new AddDialog(Optional.ofNullable(category));
     editDialog.showAndWait().ifPresentOrElse(newCategory -> {
       categoryDao.update(category.getId(), newCategory);
+      new ChangeWriterThread<>(new ModifyChange<>(category, newCategory)).start();
       new ChangeWriterThread<>(new ModifyChange<>(category, newCategory)).start();
       signaledTaskThread.signal();
     }, editDialog::close);
