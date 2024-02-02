@@ -1,8 +1,11 @@
-package com.r.projektnizad.models.history;
+package com.r.projektnizad.models.change;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.Entity;
 import com.r.projektnizad.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,6 +18,8 @@ public abstract class Change<T extends Entity> implements Serializable {
   User user;
 
   public final Long serialVersionUID = 9043873L;
+
+  private static final Logger logger = LoggerFactory.getLogger(Change.class);
 
   public Change(T oldEntity, T newEntity) {
     this.oldEntity = oldEntity;
@@ -47,6 +52,10 @@ public abstract class Change<T extends Entity> implements Serializable {
       try {
         Object oldValue = field.get(oldEntity);
         Object newValue = field.get(newEntity);
+
+        // is annotation present
+        boolean hasCustomName = field.isAnnotationPresent(NamedHistoryMember.class);
+
         if (onlyName && !field.getName().equals("name")) continue;
         if (!oldValue.equals(newValue)) {
           // if values are not primitive types, recursively call diff
@@ -59,13 +68,13 @@ public abstract class Change<T extends Entity> implements Serializable {
 
           if (onlyName) {
             diff.put(prefix, oldValue + " -> " + newValue);
-            continue;
+          } else {
+            String name = hasCustomName ? field.getAnnotation(NamedHistoryMember.class).value() : field.getName();
+            diff.put(name, oldValue + " -> " + newValue);
           }
-
-          diff.put(field.getName(), oldValue + " -> " + newValue);
         }
       } catch (IllegalAccessException e) {
-        e.printStackTrace();
+        logger.error("Error while accessing field", e);
       }
     }
 

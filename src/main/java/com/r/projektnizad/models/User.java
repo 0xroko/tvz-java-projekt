@@ -88,4 +88,8 @@ public class User extends Entity implements Serializable {
   public void setUserType(UserType userType) {
     this.userType = userType;
   }
+
+  public String getUsernameWithType() {
+    return username + " (" + userType.getName() + ")";
+  }
 }

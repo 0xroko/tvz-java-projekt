@@ -23,12 +23,17 @@ module com.r.projektnizad {
   opens com.r.projektnizad.controllers.category to javafx.fxml;
   opens com.r.projektnizad.controllers.item to javafx.fxml;
   opens com.r.projektnizad.controllers to javafx.fxml;
+  opens com.r.projektnizad.controllers.order to javafx.fxml;
 
   exports com.r.projektnizad.controllers.item;
+  exports com.r.projektnizad.controllers.category;
+  exports com.r.projektnizad.controllers.order;
+
   exports com.r.projektnizad.main;
+  exports com.r.projektnizad.threads;
   exports com.r.projektnizad.models;
   exports com.r.projektnizad.services;
-  exports com.r.projektnizad.models.history;
+  exports com.r.projektnizad.models.change;
   exports com.r.projektnizad.util;
   exports com.r.projektnizad.controllers;
   exports com.r.projektnizad.enums;

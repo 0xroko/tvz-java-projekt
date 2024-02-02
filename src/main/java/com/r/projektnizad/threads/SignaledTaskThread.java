@@ -1,6 +1,8 @@
 package com.r.projektnizad.threads;
 
+import com.r.projektnizad.models.ObservableThreadTask;
 import javafx.beans.Observable;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableStringValue;
 import javafx.collections.FXCollections;
@@ -13,21 +15,28 @@ import java.util.function.Function;
 public class SignaledTaskThread<T, P> extends Thread {
   private static final Logger logger = LoggerFactory.getLogger(SignaledTaskThread.class);
   private final Object lock = new Object();
-  private final ReadOnlyObjectWrapper<T> resultProperty = new ReadOnlyObjectWrapper<>();
   private boolean taskPending = false;
-  private final Function<P, T> fn;
+  private final ObservableThreadTask<T, P> task = new ObservableThreadTask<>();
 
-  private P param;
-
-  public ReadOnlyObjectWrapper<T> resultProperty() {
-    return resultProperty;
-  }
+  private Long period = 0L;
 
   public SignaledTaskThread(Function<P, T> fn) {
-    this.fn = fn;
+    task.setFn(fn);
     // set thread name
     this.setName("SignaledTaskThread");
     this.start();
+  }
+
+  public SignaledTaskThread(Function<P, T> fn, Long period) {
+    task.setFn(fn);
+    this.period = period;
+    // set thread name
+    this.setName("SignaledTaskThread");
+    this.start();
+  }
+
+  public ReadOnlyObjectProperty<T> getResultProperty() {
+    return task.getResultProperty();
   }
 
   @Override
@@ -36,10 +45,15 @@ public class SignaledTaskThread<T, P> extends Thread {
       try {
         while (!taskPending) {
           synchronized (lock) {
+//            if (period > 0) {
+//              lock.wait(period);
+//              taskPending = true;
+//            } else {
             lock.wait();
+//            }
           }
         }
-        resultProperty.set(fn.apply(param));
+        task.call();
         taskPending = false;
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
@@ -57,7 +71,7 @@ public class SignaledTaskThread<T, P> extends Thread {
 
   public void signal(P param) {
     synchronized (lock) {
-      this.param = param;
+      task.setParam(param);
       taskPending = true;
       lock.notify();
     }

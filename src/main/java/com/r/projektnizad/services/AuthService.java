@@ -91,6 +91,10 @@ public class AuthService {
     Files.write(Path.of(USER_FILE), users.stream().map(User::toString).toList());
   }
 
+  public Optional<User> getUserById(Long id) {
+    return users.stream().filter(u -> u.getId().equals(id)).findFirst();
+  }
+
   private void loadUsers() throws IOException {
     users.clear();
     // load

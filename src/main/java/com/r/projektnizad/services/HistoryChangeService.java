@@ -2,7 +2,7 @@ package com.r.projektnizad.services;
 
 import com.r.projektnizad.exceptions.HistoryEntryNotFound;
 import com.r.projektnizad.models.Entity;
-import com.r.projektnizad.models.history.Change;
+import com.r.projektnizad.models.change.Change;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +20,11 @@ import static com.r.projektnizad.util.Config.BASE_DATA_PATH;
 
 public class HistoryChangeService {
   static final Logger logger = LoggerFactory.getLogger(HistoryChangeService.class);
-
   static final String HISTORY_DIRECTORY = BASE_DATA_PATH + "history";
-
   static final String rotatedHistoryFileFormat = "history_%s.dat";
-  ReadWriteLock lock;
+  private final ReadWriteLock lock;
 
-  public HistoryChangeService() {
+  private HistoryChangeService() {
     super();
     lock = new ReentrantReadWriteLock();
     init();
@@ -94,6 +92,15 @@ public class HistoryChangeService {
     } finally {
       lock.writeLock().unlock();
     }
+  }
+
+  private static HistoryChangeService instance;
+
+  public static HistoryChangeService getInstance() {
+    if (instance == null) {
+      instance = new HistoryChangeService();
+    }
+    return instance;
   }
 
 }

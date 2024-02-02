@@ -8,8 +8,7 @@
       fx:controller="com.r.projektnizad.controllers.Menubar">
     <MenuBar fx:id="menubar">
         <Menu text="Narudžbe">
-            <MenuItem onAction="#viewOrders" text="Pretraga"/>
-            <MenuItem onAction="#addOrder" text="Dodaj"/>
+            <MenuItem onAction="#viewOrders" text="Pregled"/>
         </Menu>
         <Menu text="Artikli">
             <MenuItem onAction="#viewItems" text="Pregled"/>

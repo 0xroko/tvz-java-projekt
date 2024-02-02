@@ -4,7 +4,6 @@ import javafx.scene.control.TextField;
 
 public class Validators {
   public static String number(int whole, int fraction) {
-
     StringBuilder regex = new StringBuilder();
     regex.append("[0-9]{0,").append(whole).append("}");
     if (fraction > 0) {
@@ -12,6 +11,9 @@ public class Validators {
     }
     return regex.toString();
   }
+
+  // Time regex but allow empty string as well
+  public static String time = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
 
   public static void buildTextFieldValidator(TextField input, String regex) {
     input.textProperty().addListener((observable, oldValue, newValue) -> {

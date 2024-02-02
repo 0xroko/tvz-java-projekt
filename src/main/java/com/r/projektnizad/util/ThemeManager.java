@@ -14,15 +14,12 @@ import java.util.stream.IntStream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /*
-* https://github.com/mkpaz/atlantafx/blob/07f36be7add7f93b8e8457fe248fdbe568b26ccb/sampler/src/main/java/atlantafx/sampler/theme/ThemeManager.java
-* */
+ * Adapted from:
+ * https://github.com/mkpaz/atlantafx/blob/07f36be7add7f93b8e8457fe248fdbe568b26ccb/sampler/src/main/java/atlantafx/sampler/theme/ThemeManager.java
+ * */
 public class ThemeManager {
-
-  public static final String DEFAULT_FONT_FAMILY_NAME = "Inter";
   public static final int DEFAULT_FONT_SIZE = 14;
   public static final int DEFAULT_ZOOM = 100;
-  public static final AccentColor DEFAULT_ACCENT_COLOR = null;
-  public static final List<Integer> SUPPORTED_FONT_SIZE = IntStream.range(8, 29).boxed().collect(Collectors.toList());
   public static final List<Integer> SUPPORTED_ZOOM = List.of(50, 75, 80, 90, 100, 110, 125, 150, 175, 200);
   private static final PseudoClass USER_CUSTOM = PseudoClass.getPseudoClass("user-custom");
   private AccentColor accentColor;
@@ -46,27 +43,20 @@ public class ThemeManager {
   private final Map<String, String> customCSSDeclarations = new LinkedHashMap<>(); // -fx-property | value;
   private final Map<String, String> customCSSRules = new LinkedHashMap<>(); // .foo | -fx-property: value;
   private String fontFamily = "Inter Bold";
-  private int zoom = DEFAULT_ZOOM;
   private Scene scene;
-  private int fontSize = 13;
-
-  public int getFontSize() {
-    return fontSize;
-  }
 
   public void setFontSize(int size) {
     setCustomDeclaration("-fx-font-size", size + "px");
     setCustomRule(".ikonli-font-icon", String.format("-fx-icon-size: %dpx;", size + 2));
 
-    this.fontSize = size;
-
     var rawZoom = (int) Math.ceil((size * 1.0 / DEFAULT_FONT_SIZE) * 100);
-    this.zoom = SUPPORTED_ZOOM.stream()
+    int zoom = SUPPORTED_ZOOM.stream()
             .min(Comparator.comparingInt(i -> Math.abs(i - rawZoom)))
             .orElseThrow(NoSuchElementException::new);
 
     reloadCustomCSS();
   }
+
   public void setAccentColor(AccentColor color) {
     Objects.requireNonNull(color);
 
@@ -83,7 +73,7 @@ public class ThemeManager {
 
   public void setScene(Scene s) {
     this.scene = s;
-    if(!set ){
+    if (!set) {
       set = true;
       setAccentColor(AccentColor.primerPink());
       setFontSize(14);
@@ -149,6 +139,7 @@ public class ThemeManager {
     this.fontFamily = fontFamily;
     reloadCustomCSS();
   }
+
   private void reloadCustomCSS() {
     Objects.requireNonNull(scene);
     StringBuilder css = new StringBuilder();

@@ -1,8 +1,8 @@
 package com.r.projektnizad.threads;
 
-import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.Entity;
-import com.r.projektnizad.models.history.Change;
+import com.r.projektnizad.models.change.Change;
+import com.r.projektnizad.services.HistoryChangeService;
 
 public class ChangeWriterThread<T extends Entity> extends Thread {
   Change<T> change;
@@ -15,6 +15,6 @@ public class ChangeWriterThread<T extends Entity> extends Thread {
   @Override
   public void run() {
     super.run();
-    Main.historyChangeService.writeChange(change);
+    HistoryChangeService.getInstance().writeChange(change);
   }
 }

@@ -13,16 +13,17 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Locale;
+
 public class Main extends Application {
   public static final Logger logger = LoggerFactory.getLogger(Main.class);
   public static AuthService authService;
-  public static HistoryChangeService historyChangeService = new HistoryChangeService();
 
   @Override
   public void start(Stage stage) {
     Navigator.rootStage = stage;
     //Navigator.navigate("login.fxml", "Hello!");
-
+    Locale.setDefault(new Locale("hr", "HR"));
     Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
     Navigator.navigate("hello-view.fxml", "Prijava");
   }

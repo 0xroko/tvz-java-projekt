@@ -1,4 +1,4 @@
-package com.r.projektnizad.models.history;
+package com.r.projektnizad.models.change;
 
 import com.r.projektnizad.models.Entity;
 
