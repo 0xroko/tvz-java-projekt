@@ -1,6 +1,8 @@
-drop table if exists category;
+drop table if exists item_on_order;
 drop table if exists item;
+drop table if exists category;
 drop table if exists `table`;
+drop table if exists `order`;
 
 create table category
 (
@@ -112,4 +114,53 @@ values ('Table 1', 'Table 1', 4),
        ('Table 15', 'Table 15', 4),
        ('Table 16', 'Table 16', 4),
        ('Table 17', 'Table 17', 4);
+
+
+create table `order`
+(
+    id         int          not null auto_increment,
+    table_id   int          not null,
+    user_id    int          not null,
+    status     int          not null,
+    order_time timestamp    not null default CURRENT_TIMESTAMP,
+
+    note       varchar(255) null,
+/*    created_at timestamp not null,
+    updated_at timestamp not null,*/
+    constraint order_pk
+        primary key (id),
+    constraint order_table_id_fk
+        foreign key (table_id) references `table` (id)
+);
+
+
+create table item_on_order
+(
+    id         int       not null auto_increment,
+    order_id   int       not null,
+    item_id    int       not null,
+    status     int       not null,
+    start_time timestamp not null default CURRENT_TIMESTAMP,
+    /*created_at timestamp not null,
+    updated_at timestamp not null,*/
+    constraint order_item_pk
+        primary key (id),
+    constraint order_item_order_id_fk
+        foreign key (order_id) references `order` (id),
+    constraint order_item_item_id_fk
+        foreign key (item_id) references item (id)
+);
+
+
+insert into `order` (table_id, user_id, status, note)
+values (1, 1, 0, 'Obitelj Voda'),
+       (2, 1, 0, 'Obitelj 2'),
+       (3, 1, 0, 'Obitelj 3'),
+       (4, 1, 0, 'Obitelj 2'),
+       (1, 1, 0, 'Obitelj 2'),
+       (1, 1, 0, 'Obitelj 3'),
+       (1, 1, 0, 'Obitelj 4'),
+       (8, 1, 0, 'Obitelj 5');
+
+
 

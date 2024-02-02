@@ -3,24 +3,33 @@ package com.r.projektnizad.models;
 import com.r.projektnizad.enums.OrderStatus;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Order extends Entity implements Serializable {
   private ArrayList<ItemOnOrder> itemsOnOrder;
   private Table table;
   private OrderStatus status;
+  private Long userId;
+  private String note;
+  private BigDecimal orderPriceSum = BigDecimal.ZERO;
+  private Long orderItemsCount = 0L;
+
   /**
    * If RESERVED, this is the time when the order time is beginning.
    */
-  private Date orderTime;
+  private LocalDateTime orderTime;
 
-  public Order(Long id, ArrayList<ItemOnOrder> itemsOnOrder, Table table, OrderStatus status, Date orderTime) {
+  public Order(Long id, ArrayList<ItemOnOrder> itemsOnOrder, Table table, OrderStatus status, Long userId, LocalDateTime orderTime, String note) {
     super(id);
     this.itemsOnOrder = itemsOnOrder;
     this.table = table;
     this.status = status;
+    this.userId = userId;
     this.orderTime = orderTime;
+    this.note = note;
+
   }
 
   public ArrayList<ItemOnOrder> getItemsOnOrder() {
@@ -47,16 +56,49 @@ public class Order extends Entity implements Serializable {
     this.status = status;
   }
 
-  public Date getOrderTime() {
+  public LocalDateTime getOrderTime() {
     return orderTime;
   }
 
-  public void setOrderTime(Date orderTime) {
+  public void setOrderTime(LocalDateTime orderTime) {
     this.orderTime = orderTime;
+  }
+
+  public Long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   @Override
   public String getEntityName() {
     return "narudžba";
+  }
+
+
+  public BigDecimal getOrderPriceSum() {
+    return orderPriceSum;
+  }
+
+  public void setOrderPriceSum(BigDecimal orderPriceSum) {
+    this.orderPriceSum = orderPriceSum;
+  }
+
+  public Long getOrderItemsCount() {
+    return orderItemsCount;
+  }
+
+  public void setOrderItemsCount(Long orderItemsCount) {
+    this.orderItemsCount = orderItemsCount;
+  }
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
   }
 }

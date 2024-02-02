@@ -1,5 +1,6 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
 import com.r.projektnizad.enums.ItemType;
 
 import java.io.Serializable;
@@ -7,13 +8,21 @@ import java.math.BigDecimal;
 import java.time.Duration;
 
 public class Item extends Entity implements Serializable, Cloneable {
+  @NamedHistoryMember("Naziv")
   private String name;
+  @NamedHistoryMember("Opis")
   private String description;
+  @NamedHistoryMember("Cijena")
   private BigDecimal price;
+  @NamedHistoryMember("Kategorija")
   private Category category;
+  @NamedHistoryMember("Zaliha")
   private Long stock;
+  @NamedHistoryMember("Povećanje zalihe")
   private Long defaultStockIncrement = 1L;
+  @NamedHistoryMember("Tip")
   private ItemType itemType;
+  @NamedHistoryMember("Vrijeme pripreme")
   private Duration preparationTime;
 
   public Item(Long id, String name, String description, BigDecimal price, Category category, Long stock, Long defaultStockIncrement, ItemType itemType, Duration preparationTime) {

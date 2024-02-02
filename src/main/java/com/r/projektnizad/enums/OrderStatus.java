@@ -1,23 +1,35 @@
 package com.r.projektnizad.enums;
 
+import com.r.projektnizad.util.Filter;
+
 public enum OrderStatus {
-  RESERVED("Reserved"),
-  DONE("Done"),
-  CANCELED("Canceled"),
-  IN_PROGRESS("In progress");
+  RESERVED(0L, "Rezervirano"),
+  DONE(1L, "Gotovo"),
+  CANCELED(2L, "Otkazano"),
+  IN_PROGRESS(3L, "U tijeku");
 
+  private final String name;
+  private final Long code;
 
-  private String name;
-
-  OrderStatus(String name) {
+  OrderStatus(Long code, String name) {
     this.name = name;
+    this.code = code;
   }
 
   public String getName() {
     return name;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public Long getCode() {
+    return code;
+  }
+
+  public static OrderStatus fromCode(Long code) {
+    for (OrderStatus status : OrderStatus.values()) {
+      if (status.getCode().equals(code)) {
+        return status;
+      }
+    }
+    return null;
   }
 }

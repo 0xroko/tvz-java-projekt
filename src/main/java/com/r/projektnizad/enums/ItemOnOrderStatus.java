@@ -4,7 +4,7 @@ public enum ItemOnOrderStatus {
   PREPARING("Preparing"),
   DONE("Done");
 
-  private String name;
+  private final String name;
 
   ItemOnOrderStatus(String name) {
     this.name = name;
