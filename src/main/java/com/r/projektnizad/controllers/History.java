@@ -1,10 +1,11 @@
 package com.r.projektnizad.controllers;
 
-import com.r.projektnizad.exceptions.HistoryEntryNotFound;
-import com.r.projektnizad.main.Main;
+import com.r.projektnizad.models.CleanableScene;
 import com.r.projektnizad.models.Entity;
-import com.r.projektnizad.models.history.Change;
+import com.r.projektnizad.models.change.Change;
+import com.r.projektnizad.threads.ChangeReaderThread;
 import com.r.projektnizad.util.CustomTableView;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-public class History {
+public class History implements CleanableScene {
   public CustomTableView<Change<? extends Entity>> historyTableView;
   public TableColumn<Change<?>, String> dateTableColumn;
   public TableColumn<Change<?>, String> entityNameTableColumn;
@@ -28,8 +29,9 @@ public class History {
   public ComboBox<String> entityFilterCombobox;
   public DatePicker filterDatePicker;
   public ComboBox<String> userFilterComboBox;
-
   public String allFilter = "Svi";
+
+  public ChangeReaderThread changeReaderThread = new ChangeReaderThread();
 
   void setFiltersFromChanges(ArrayList<Change<Entity>> changes) {
     var entities = new ArrayList<String>();
@@ -77,30 +79,14 @@ public class History {
     return filtered;
   }
 
-  ArrayList<Change<Entity>> currentChanges = new ArrayList<>();
-
   void dateSearch() {
     Date date = filterDatePicker.getValue() == null ? new Date() : new Date(filterDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-    try {
-      Optional<ArrayList<Change<Entity>>> changes = Main.historyChangeService.readChanges(date);
-      if (changes.isEmpty()) {
-        return;
-      }
-
-      setFiltersFromChanges(changes.get());
-      currentChanges = changes.get();
-      search();
-    } catch (HistoryEntryNotFound e) {
-      historyTableView.getItems().clear();
-    }
+    changeReaderThread.updateParams(date);
   }
 
   void search() {
-    historyTableView.getItems().clear();
-    historyTableView.getItems().addAll(filter(currentChanges));
-    historyTableView.autoResizeColumns();
-  }
 
+  }
 
   public void initialize() {
     dateTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))));
@@ -108,6 +94,15 @@ public class History {
     userTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getUsername() + " (" + cellData.getValue().getUser().getUserType().getName() + ")"));
     typeTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getChangeType()));
     idTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getActualEntity().getId().toString()));
+
+    changeReaderThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
+      Platform.runLater(() -> {
+        setFiltersFromChanges(newValue);
+      });
+
+      historyTableView.setItems(FXCollections.observableArrayList(filter(newValue)));
+      historyTableView.autoResizeColumns();
+    });
 
     descriptionTableColumn.setCellValueFactory(cellData -> {
       StringBuilder sb = new StringBuilder();
@@ -126,5 +121,10 @@ public class History {
     userFilterComboBox.valueProperty().addListener((observable, oldValue, newValue) -> search());
 
     dateSearch();
+  }
+
+  @Override
+  public void cleanup() {
+    changeReaderThread.interrupt();
   }
 }
