@@ -17,15 +17,12 @@ public class Navigator {
   private static final Logger logger = LoggerFactory.getLogger(Navigator.class);
   static final public String baseResourcePath = "/com/r/projektnizad/";
   static public Stage rootStage;
+  public static ThemeManager themeManager = new ThemeManager();
+  static Object controller;
 
   public static void setController(Object controller) {
     Navigator.controller = controller;
   }
-
-  public static ThemeManager themeManager = new ThemeManager();
-
-
-  static Object controller;
 
   static void applyStyles(Scene scene) {
     // set stylesheet
@@ -45,7 +42,6 @@ public class Navigator {
       return null;
     }
   }
-
 
   static void cleanUpLastScene() {
     if (controller instanceof CleanableScene sc) {
@@ -71,6 +67,12 @@ public class Navigator {
     rootStage.setScene(scene);
     rootStage.setTitle(title);
     rootStage.show();
+
+    // set exception handler
+    Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+      logger.error("Uncaught exception", e);
+      new AppDialog().showExceptionMessage(e);
+    });
 
     rootStage.onHidingProperty().set(e -> {
       cleanUpLastScene();
