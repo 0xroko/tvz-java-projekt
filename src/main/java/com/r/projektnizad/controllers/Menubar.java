@@ -19,11 +19,12 @@ public class Menubar {
 
   @FXML
   void initialize() {
-    String username = Main.authService.getCurrentUser().get().getUsername();
+    String username = Main.authService.getCurrentUser().get().getUsernameWithType();
     logoutMenu.setText(username);
   }
 
   public void viewOrders(ActionEvent actionEvent) {
+    Navigator.navigate("order/view.fxml", "Narudžbe");
   }
 
   public void addOrder(ActionEvent actionEvent) {

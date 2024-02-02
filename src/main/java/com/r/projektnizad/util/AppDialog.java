@@ -2,8 +2,15 @@ package com.r.projektnizad.util;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import org.controlsfx.dialog.ExceptionDialog;
 
 public class AppDialog {
+  public void showExceptionMessage(Throwable e) {
+    ExceptionDialog alert = new ExceptionDialog(e);
+    alert.setTitle("Greška");
+    alert.setHeaderText("Došlo je do greške :(");
+    alert.showAndWait();
+  }
 
   public void showErrorMessage(String title, String message) {
     Alert alert = new Alert(Alert.AlertType.ERROR);

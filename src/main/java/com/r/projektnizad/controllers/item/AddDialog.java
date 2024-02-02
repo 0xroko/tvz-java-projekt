@@ -44,6 +44,8 @@ public class AddDialog extends Dialog<Item> {
 
   @FXML
   void initialize() {
+    preparationTimeTextField.setMask("99:99");
+
     itemTypeComboBox.getItems().addAll(ItemType.values());
 
     itemTypeComboBox.setCellFactory(param -> Util.getComboBoxListCell(ItemType::getName));
@@ -130,7 +132,6 @@ public class AddDialog extends Dialog<Item> {
             })
             .decorates(defaultStockIncrementTextField).immediate();
 
-
   }
 
 
@@ -140,8 +141,6 @@ public class AddDialog extends Dialog<Item> {
     Navigator.asDialog("item/add.fxml", this);
 
     boolean isEdit = editItem.isPresent();
-
-    preparationTimeTextField.setMask("99:99");
 
     if (isEdit) {
       Item item = editItem.get();
