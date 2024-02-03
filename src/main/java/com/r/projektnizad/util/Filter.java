@@ -16,7 +16,6 @@ public class Filter {
 
   public static class FilterItem {
     String value;
-
     FilterType type;
 
     public FilterItem(String value, FilterType type) {
@@ -42,7 +41,6 @@ public class Filter {
       return sb.toString();
     }
     for (Map.Entry<String, FilterItem> entry : items.entrySet()) {
-
       if (entry.getValue().type == FilterType.LIKE) {
         sb.append(entry.getKey());
         sb.append(" LIKE ");
@@ -66,7 +64,6 @@ public class Filter {
         sb.append(entry.getValue().getValue());
         sb.append("') + INTERVAL 1 DAY)");
       }
-
       sb.append(" AND ");
     }
     if (!items.isEmpty()) {

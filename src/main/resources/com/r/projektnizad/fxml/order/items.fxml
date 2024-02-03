@@ -42,7 +42,6 @@
                 <TableColumn fx:id="itemNameTableColumn" prefWidth="75.0" text="Artikl"/>
                 <TableColumn fx:id="statusTableColumn" prefWidth="75.0" text="Status"/>
                 <TableColumn fx:id="priceTableColumn" prefWidth="75.0" text="Cijena"/>
-                
             </columns>
         </CustomTableView>
     </GridPane>
