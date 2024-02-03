@@ -2,7 +2,14 @@ package com.r.projektnizad.enums;
 
 import com.r.projektnizad.util.Filter;
 
+import java.util.ArrayList;
+
 public enum OrderStatus {
+
+  /**
+   * ONLY USED FOR FILTERING
+   */
+  ALL(-1L, "Sve"),
   RESERVED(0L, "Rezervirano"),
   DONE(1L, "Gotovo"),
   CANCELED(2L, "Otkazano"),
@@ -31,5 +38,15 @@ public enum OrderStatus {
       }
     }
     return null;
+  }
+
+  public static ArrayList<OrderStatus> getValues() {
+    ArrayList<OrderStatus> values = new ArrayList<>();
+    for (OrderStatus status : OrderStatus.values()) {
+      if (!status.equals(ALL)) {
+        values.add(status);
+      }
+    }
+    return values;
   }
 }
