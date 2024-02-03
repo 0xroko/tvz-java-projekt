@@ -48,14 +48,16 @@ public class View implements CleanableScene {
 
   public void initialize() {
     Navigator.setController(this);
-    orderStatusComboBox.setItems(FXCollections.observableArrayList(OrderStatus.values()));
 
+    orderStatusComboBox.setItems(FXCollections.observableArrayList(OrderStatus.values()));
     orderStatusComboBox.getSelectionModel().selectFirst();
     Util.comboBoxCellFactorySetters(orderStatusComboBox, OrderStatus::getName);
 
     orderDateDatePicker.setValue(LocalDateTime.now().toLocalDate());
     orderDateDatePicker.getEditor().setDisable(true);
     orderDateDatePicker.getEditor().setOpacity(1);
+    // bug where setting the value of the date picker doesn't trigger the listener
+    filters.put("order_time", new Filter.FilterItem(Filter.formatLocalDateTime(orderDateDatePicker.getValue().atStartOfDay()), Filter.FilterType.DATE));
 
     idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getId()).asObject());
     dateTableColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOrderTime()));
@@ -113,12 +115,12 @@ public class View implements CleanableScene {
       orderTableView.autoResizeColumns();
     });
 
-    orderDateDatePicker.setValue(LocalDateTime.now().toLocalDate());
 
     signaledTaskThread.signal(filters);
   }
 
   private void openOrderView(Order actionEvent) {
+
   }
 
   private void openOrderEdit(Order order) {

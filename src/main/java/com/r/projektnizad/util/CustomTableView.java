@@ -49,8 +49,7 @@ public class CustomTableView<T> extends TableView<T> {
   public void autoResizeColumns() {
     //Set the right policy
     this.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-    this.getColumns().stream().forEach((column) ->
-    {
+    this.getColumns().stream().forEach((column) -> {
       //Minimal width = columnheader
       Text t = new Text(column.getText());
       double max = t.getLayoutBounds().getWidth();
@@ -66,7 +65,12 @@ public class CustomTableView<T> extends TableView<T> {
         }
       }
       //set the new max-widht with some extra space
-      column.setPrefWidth(max + 40.0d);
+      // if macos set padding 80
+      if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        column.setPrefWidth(max + 60.0d);
+      } else {
+        column.setPrefWidth(max + 40.0d);
+      }
     });
 
 

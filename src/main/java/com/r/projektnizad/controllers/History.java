@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.Optional;
 
 public class History implements CleanableScene {
-  public CustomTableView<Change<? extends Entity>> historyTableView;
+  public CustomTableView<Change<Entity>> historyTableView;
   public TableColumn<Change<?>, String> dateTableColumn;
   public TableColumn<Change<?>, String> entityNameTableColumn;
   public TableColumn<Change<?>, String> descriptionTableColumn;
@@ -100,7 +100,7 @@ public class History implements CleanableScene {
         setFiltersFromChanges(newValue);
       });
 
-      historyTableView.setItems(FXCollections.observableArrayList(filter(newValue)));
+      historyTableView.setItems(filter(newValue));
       historyTableView.autoResizeColumns();
     });
 

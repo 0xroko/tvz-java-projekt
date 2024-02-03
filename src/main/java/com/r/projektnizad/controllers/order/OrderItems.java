@@ -15,7 +15,6 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.TableColumn;
 
 public class OrderItems extends Dialog<Boolean> {
-
   @FXML
   Button addItemToOrderButton;
   @FXML
@@ -31,5 +30,6 @@ public class OrderItems extends Dialog<Boolean> {
 
   public OrderItems(Long orderId) {
     Navigator.asDialog("order/items.fxml", this);
+
   }
 }
