@@ -62,6 +62,9 @@ public class SignaledTaskThread<T, P> extends Thread {
     logger.info("Thread ended");
   }
 
+  /**
+   * Calling this will keep the old params
+   */
   public void signal() {
     synchronized (lock) {
       taskPending = true;

@@ -8,6 +8,7 @@ import javafx.util.converter.LocalDateStringConverter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.function.Function;
 
@@ -29,8 +30,8 @@ public class Util {
     return dateTime.format(new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter());
   }
 
-  public static LocalDateTime parseTime(String time) {
-    return LocalDateTime.parse(time, new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter());
+  public static LocalTime parseTime(String time) {
+    return LocalTime.parse(time, new DateTimeFormatterBuilder().appendPattern("HH:mm").toFormatter());
   }
 
   public static <T> ComboBoxListCell<T> getComboBoxListCell(Function<T, String> predicate) {
@@ -52,6 +53,8 @@ public class Util {
         super.updateItem(item, empty);
         if (item != null) {
           setText(predicate.apply(item));
+        } else {
+          setText(null);
         }
       }
     });

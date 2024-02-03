@@ -2,7 +2,7 @@ package com.r.projektnizad.controllers.order;
 
 import atlantafx.base.controls.MaskTextField;
 import atlantafx.base.theme.Styles;
-import com.r.projektnizad.dao.TableRepository;
+import com.r.projektnizad.repositories.TableRepository;
 import com.r.projektnizad.enums.OrderStatus;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.Order;
@@ -64,7 +64,6 @@ public class AddDialog extends Dialog<Order> {
       }
     }).decorates(timeTextField).immediate();
 
-
     validator.createCheck().dependsOn("details", detailsTextField.textProperty()).withMethod(c -> {
       if (detailsTextField.getText().isEmpty()) {
         c.error("Morate unijeti detalje narudžbe");
@@ -108,7 +107,7 @@ public class AddDialog extends Dialog<Order> {
 
       if (param == CustomButtonTypes.EDIT) {
         ButtonType buttonType = new AppDialog().showConfirmationMessage("Izmjena narudžbe", "Jeste li sigurni da želite izmijeniti narudžbu?", CustomButtonTypes.EDIT);
-        if (buttonType != CustomButtonTypes.EDIT) {
+        if (buttonType == CustomButtonTypes.CANCEL) {
           return null;
         }
       }
@@ -119,7 +118,7 @@ public class AddDialog extends Dialog<Order> {
               tableComboBox.getSelectionModel().getSelectedItem(),
               nowCheckBox.isSelected() ? OrderStatus.IN_PROGRESS : OrderStatus.RESERVED,
               Main.authService.getCurrentUser().get().getId(),
-              datePicker.getValue().atTime(Util.parseTime(timeTextField.getText()).toLocalTime()),
+              datePicker.getValue().atTime(Util.parseTime(timeTextField.getText())),
               detailsTextField.getText()
       );
     });

@@ -33,9 +33,9 @@
             <padding>
                 <Insets bottom="16.0" top="16.0"/>
             </padding>
-            <Label styleClass="title-2" text="Narudzbe"/>
+            <Label styleClass="title-2" text="Narudžbe"/>
             <Label text="" HBox.hgrow="ALWAYS"/>
-            <Button onAction="#openOrderAdd" text="Dodaj narudzbu"/>
+            <Button onAction="#openOrderAdd" text="Dodaj narudžbu"/>
         </HBox>
         <VBox GridPane.rowIndex="2">
             <padding>
@@ -60,6 +60,7 @@
                 <TableColumn fx:id="idTableColumn" prefWidth="75.0" text="ID"/>
                 <TableColumn fx:id="dateTableColumn" prefWidth="75.0" text="Datum"/>
                 <TableColumn fx:id="tableTableColumn" prefWidth="75.0" text="Stol"/>
+                <TableColumn fx:id="noteTableColumn" prefWidth="75.0" text="Detalji"/>
                 <TableColumn fx:id="statusTableColumn" prefWidth="75.0" text="Status"/>
                 <TableColumn fx:id="userTableColumn" prefWidth="75.0" text="Korisnik"/>
                 <TableColumn fx:id="priceTableColumn" prefWidth="75.0" text="Cijena"/>
