@@ -2,7 +2,7 @@ package com.r.projektnizad.controllers.item;
 
 import atlantafx.base.controls.MaskTextField;
 import atlantafx.base.theme.Styles;
-import com.r.projektnizad.dao.CategoryDao;
+import com.r.projektnizad.repositories.CategoryRepository;
 import com.r.projektnizad.enums.ItemType;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.Item;
@@ -10,15 +10,11 @@ import com.r.projektnizad.models.ItemBuilder;
 import com.r.projektnizad.util.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.layout.VBox;
 import net.synedra.validatorfx.Validator;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class AddDialog extends Dialog<Item> {
   @FXML
@@ -40,7 +36,7 @@ public class AddDialog extends Dialog<Item> {
   @FXML
   VBox preparationField;
 
-  CategoryDao categoryDao = new CategoryDao();
+  CategoryRepository categoryRepository = new CategoryRepository();
 
   @FXML
   void initialize() {
@@ -51,7 +47,7 @@ public class AddDialog extends Dialog<Item> {
     itemTypeComboBox.setCellFactory(param -> Util.getComboBoxListCell(ItemType::getName));
     itemTypeComboBox.setButtonCell(Util.getComboBoxListCell(ItemType::getName));
 
-    categoryComboBox.getItems().addAll(categoryDao.getAll());
+    categoryComboBox.getItems().addAll(categoryRepository.getAll());
 
     categoryComboBox.setCellFactory(param -> Util.getComboBoxListCell(Category::getName));
     categoryComboBox.setButtonCell(Util.getComboBoxListCell(Category::getName));

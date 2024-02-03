@@ -4,7 +4,7 @@
  *
  */
 
-package com.r.projektnizad.dao;
+package com.r.projektnizad.repositories;
 
 import com.r.projektnizad.db.Database;
 import com.r.projektnizad.models.Dao;

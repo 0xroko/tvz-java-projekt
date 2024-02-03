@@ -15,7 +15,6 @@ public class CustomTableView<T> extends TableView<T> {
 
   public CustomTableView() {
     super();
-
     Platform.runLater(() -> {
       scrollBar = (ScrollBar) this.lookup(".scroll-bar:vertical");
       scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {

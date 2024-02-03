@@ -1,4 +1,4 @@
-package com.r.projektnizad.dao;
+package com.r.projektnizad.repositories;
 
 import com.r.projektnizad.db.Database;
 import com.r.projektnizad.models.Category;
@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class CategoryDao implements Dao<Category> {
-  private static final Logger logger = LoggerFactory.getLogger(CategoryDao.class);
+public class CategoryRepository implements Dao<Category> {
+  private static final Logger logger = LoggerFactory.getLogger(CategoryRepository.class);
 
   @Override
   public Optional<Category> get(long id) {

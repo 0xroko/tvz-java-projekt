@@ -4,27 +4,25 @@
  *
  */
 
-package com.r.projektnizad.dao;
+package com.r.projektnizad.repositories;
 
 import com.r.projektnizad.db.Database;
+import com.r.projektnizad.enums.ItemOnOrderStatus;
 import com.r.projektnizad.enums.OrderStatus;
 import com.r.projektnizad.models.*;
 import com.r.projektnizad.util.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class OrderDao implements Dao<Order> {
+public class OrderRepository implements Dao<Order> {
 
-  private static final Logger logger = LoggerFactory.getLogger(OrderDao.class);
+  private static final Logger logger = LoggerFactory.getLogger(OrderRepository.class);
 
   @Override
   public Optional<Order> get(long id) {
@@ -35,8 +33,8 @@ public class OrderDao implements Dao<Order> {
     ArrayList<ItemOnOrder> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       Statement stmt = conn.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM `item_on_order` JOIN `item` i2 on i2.'id' = 'item_on_order'.'item_id' " +
-              "JOIN category c on c.id = i2.id" +
+      ResultSet rs = stmt.executeQuery("SELECT * FROM `item_on_order` JOIN `item` i on i.'id' = 'item_on_order'.'item_id' " +
+              "JOIN category c on c.id = i.id" +
               " WHERE 'item_on_order'.'order_id' = " + orderId);
       while (rs.next()) {
         items.add(mapToItemOnOrder(rs));
@@ -51,15 +49,14 @@ public class OrderDao implements Dao<Order> {
     return new ItemOnOrder(
             rs.getLong("id"),
             new ItemBuilder()
-                    .setId(rs.getLong("i2.id"))
-                    .setName(rs.getString("i2.name"))
-                    .setDescription(rs.getString("i2.description"))
-                    .setPrice(rs.getBigDecimal("i2.price"))
+                    .setId(rs.getLong("i.id"))
+                    .setName(rs.getString("i.name"))
+                    .setDescription(rs.getString("i.description"))
+                    .setPrice(rs.getBigDecimal("i.price"))
                     .setCategory(new Category(rs.getLong("c.id"), rs.getString("c.name"), rs.getString("c.description")))
                     .createItem(),
-
-            rs.getTimestamp("order_time").toLocalDateTime(),
-            null
+            rs.getTimestamp("start_time").toLocalDateTime(),
+            ItemOnOrderStatus.fromCode(rs.getLong("status"))
     );
   }
 
@@ -92,17 +89,48 @@ public class OrderDao implements Dao<Order> {
 
   @Override
   public void save(Order order) {
-
+    try (Connection conn = Database.connect()) {
+      var stmt = conn.prepareStatement("INSERT INTO `order` (table_id, status, user_id, order_time, note) VALUES (?, ?, ?, ?, ?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+      setOrder(order, stmt);
+      stmt.executeUpdate();
+      ResultSet rs = stmt.getGeneratedKeys();
+      if (rs.next()) {
+        order.setId(rs.getLong(1));
+      }
+    } catch (SQLException e) {
+      logger.error("Error while saving order", e);
+    }
   }
 
   @Override
   public void update(Long id, Order order) {
+    try (Connection conn = Database.connect()) {
+      var stmt = conn.prepareStatement("UPDATE `order` SET table_id = ?, status = ?, user_id = ?, order_time = ?, note = ? WHERE id = ?");
+      setOrder(order, stmt);
+      stmt.setLong(6, id);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      logger.error("Error while updating order", e);
+    }
+  }
 
+  private void setOrder(Order order, PreparedStatement stmt) throws SQLException {
+    stmt.setLong(1, order.getTable().getId());
+    stmt.setLong(2, order.getStatus().getCode());
+    stmt.setLong(3, order.getUserId());
+    stmt.setTimestamp(4, Timestamp.valueOf(order.getOrderTime()));
+    stmt.setString(5, order.getNote());
   }
 
   @Override
   public void delete(Long id) {
-
+    try (Connection conn = Database.connect()) {
+      var stmt = conn.prepareStatement("DELETE FROM `order` WHERE id = ?");
+      stmt.setLong(1, id);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      logger.error("Error while deleting order", e);
+    }
   }
 
   @Override

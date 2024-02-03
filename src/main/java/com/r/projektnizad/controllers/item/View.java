@@ -1,7 +1,7 @@
 package com.r.projektnizad.controllers.item;
 
-import com.r.projektnizad.dao.CategoryDao;
-import com.r.projektnizad.dao.ItemDao;
+import com.r.projektnizad.repositories.CategoryRepository;
+import com.r.projektnizad.repositories.ItemRepository;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.CleanableScene;
 import com.r.projektnizad.models.Item;
@@ -35,8 +35,8 @@ public class View implements CleanableScene {
   public ComboBox<Category> categorySearchComboBox;
 
   private final Map<String, Filter.FilterItem> filterMap = new HashMap<>();
-  private final ItemDao itemDao = new ItemDao();
-  private final SignaledTaskThread<List<Item>, Map<String, Filter.FilterItem>> signaledTaskThread = new SignaledTaskThread<>(itemDao::filter);
+  private final ItemRepository itemRepository = new ItemRepository();
+  private final SignaledTaskThread<List<Item>, Map<String, Filter.FilterItem>> signaledTaskThread = new SignaledTaskThread<>(itemRepository::filter);
 
   void refresh() {
     signaledTaskThread.signal(filterMap);
@@ -63,7 +63,7 @@ public class View implements CleanableScene {
       refresh();
     });
 
-    categorySearchComboBox.setItems(FXCollections.observableArrayList(new CategoryDao().getAll()));
+    categorySearchComboBox.setItems(FXCollections.observableArrayList(new CategoryRepository().getAll()));
     categorySearchComboBox.getItems().addFirst(new Category(-1L, "Sve", "Sve kategorije"));
     Util.comboBoxCellFactorySetters(categorySearchComboBox, Category::getName);
 
@@ -102,7 +102,7 @@ public class View implements CleanableScene {
 
   private void edit(Item item) {
     new AddDialog(Optional.of(item)).showAndWait().ifPresent(editedItem -> {
-      itemDao.update(editedItem.getId(), editedItem);
+      itemRepository.update(editedItem.getId(), editedItem);
       new ChangeWriterThread<>(new ModifyChange<>(item, editedItem)).start();
       refresh();
     });
@@ -111,7 +111,7 @@ public class View implements CleanableScene {
   private void stockReplenish(Item item) {
     Item oldItem = item.clone();
     item.setStock(item.getDefaultStockIncrement() + item.getStock());
-    itemDao.update(item.getId(), item);
+    itemRepository.update(item.getId(), item);
     new ChangeWriterThread<>(new ModifyChange<>(oldItem, item)).start();
     refresh();
   }
@@ -121,14 +121,14 @@ public class View implements CleanableScene {
     if (confirm != CustomButtonTypes.DELETE) {
       return;
     }
-    itemDao.delete(item.getId());
+    itemRepository.delete(item.getId());
     new ChangeWriterThread<>(new DeleteChange<>(item)).start();
     refresh();
   }
 
   public void openAddItem() {
     new AddDialog(Optional.empty()).showAndWait().ifPresent(item -> {
-      itemDao.save(item);
+      itemRepository.save(item);
       new ChangeWriterThread<>(new AddChange<>(item)).start();
       refresh();
     });

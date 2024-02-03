@@ -1,6 +1,6 @@
 package com.r.projektnizad.controllers.category;
 
-import com.r.projektnizad.dao.CategoryDao;
+import com.r.projektnizad.repositories.CategoryRepository;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.CleanableScene;
 import com.r.projektnizad.models.change.AddChange;
@@ -25,9 +25,9 @@ public class View implements CleanableScene {
   public TableColumn<Category, String> descriptionTableColumn;
   public TableColumn<Category, String> nameTableColumn;
   public TableColumn<Category, Long> idTableColumn;
-  private final CategoryDao categoryDao = new CategoryDao();
+  private final CategoryRepository categoryRepository = new CategoryRepository();
   public CustomTableView<Category> categoryTableView;
-  private final SignaledTaskThread<List<Category>, Map<String, String>> signaledTaskThread = new SignaledTaskThread<>((v) -> categoryDao.getAll());
+  private final SignaledTaskThread<List<Category>, Map<String, String>> signaledTaskThread = new SignaledTaskThread<>((v) -> categoryRepository.getAll());
 
   @FXML
   private void initialize() {
@@ -57,7 +57,7 @@ public class View implements CleanableScene {
   private void edit(Category category) {
     var editDialog = new AddDialog(Optional.ofNullable(category));
     editDialog.showAndWait().ifPresentOrElse(newCategory -> {
-      categoryDao.update(category.getId(), newCategory);
+      categoryRepository.update(category.getId(), newCategory);
       new ChangeWriterThread<>(new ModifyChange<>(category, newCategory)).start();
       new ChangeWriterThread<>(new ModifyChange<>(category, newCategory)).start();
       signaledTaskThread.signal();
@@ -68,7 +68,7 @@ public class View implements CleanableScene {
     ButtonType confirm = new AppDialog().showConfirmationMessage("Obriši kategoriju", "Da li ste sigurni da želite obrisati kategoriju?", CustomButtonTypes.DELETE);
     if (confirm == CustomButtonTypes.CANCEL) return;
 
-    categoryDao.delete(category.getId());
+    categoryRepository.delete(category.getId());
     new ChangeWriterThread<>(new DeleteChange<>(category)).start();
     signaledTaskThread.signal();
   }
@@ -81,7 +81,7 @@ public class View implements CleanableScene {
   public void openAddCategory(ActionEvent actionEvent) {
     var addDialog = new AddDialog(Optional.empty());
     addDialog.showAndWait().ifPresent(category -> {
-      categoryDao.save(category);
+      categoryRepository.save(category);
       new ChangeWriterThread<>(new AddChange<>(category)).start();
       signaledTaskThread.signal();
     });

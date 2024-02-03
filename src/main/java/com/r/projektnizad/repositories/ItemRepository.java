@@ -1,4 +1,4 @@
-package com.r.projektnizad.dao;
+package com.r.projektnizad.repositories;
 
 import com.r.projektnizad.db.Database;
 import com.r.projektnizad.enums.ItemType;
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ItemDao implements Dao<Item> {
-  private static final Logger logger = LoggerFactory.getLogger(ItemDao.class);
+public class ItemRepository implements Dao<Item> {
+  private static final Logger logger = LoggerFactory.getLogger(ItemRepository.class);
 
   @Override
   public Optional<Item> get(long id) {
