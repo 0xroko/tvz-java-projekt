@@ -1,5 +1,6 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
 import com.r.projektnizad.enums.OrderStatus;
 
 import java.io.Serializable;
@@ -9,9 +10,13 @@ import java.util.ArrayList;
 
 public class Order extends Entity implements Serializable {
   private ArrayList<ItemOnOrder> itemsOnOrder;
+  @NamedHistoryMember("Stol")
   private Table table;
+  @NamedHistoryMember("Status")
   private OrderStatus status;
+  @NamedHistoryMember("Korisnik")
   private Long userId;
+  @NamedHistoryMember("Detalji")
   private String note;
   private BigDecimal orderPriceSum = BigDecimal.ZERO;
   private Long orderItemsCount = 0L;

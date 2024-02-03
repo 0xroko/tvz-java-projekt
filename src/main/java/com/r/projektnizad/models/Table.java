@@ -1,10 +1,15 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
+
 import java.io.Serializable;
 
 public class Table extends Entity implements Serializable {
+  @NamedHistoryMember("Ime")
   private String name;
+  @NamedHistoryMember("Opis")
   private String description;
+  @NamedHistoryMember("Broj mjesta")
   private Long seats;
 
   public Table(Long id, String name, String description, Long seats) {
