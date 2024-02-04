@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Order extends Entity implements Serializable {
+public class Order extends Entity implements Serializable, Cloneable {
+  @NamedHistoryMember("Stavke")
   private ArrayList<ItemOnOrder> itemsOnOrder;
   @NamedHistoryMember("Stol")
   private Table table;
@@ -20,6 +21,7 @@ public class Order extends Entity implements Serializable {
   private String note;
   private BigDecimal orderPriceSum = BigDecimal.ZERO;
   private Long orderItemsCount = 0L;
+  private String orderItemsString = "";
 
   /**
    * If RESERVED, this is the time when the order time is beginning.
@@ -34,7 +36,6 @@ public class Order extends Entity implements Serializable {
     this.userId = userId;
     this.orderTime = orderTime;
     this.note = note;
-
   }
 
   public ArrayList<ItemOnOrder> getItemsOnOrder() {
@@ -105,5 +106,28 @@ public class Order extends Entity implements Serializable {
 
   public void setNote(String note) {
     this.note = note;
+  }
+
+  public String getOrderItemsString() {
+    return orderItemsString;
+  }
+
+  public void setOrderItemsString(String orderItemsString) {
+    this.orderItemsString = orderItemsString;
+  }
+
+  @Override
+  public Order clone() {
+    try {
+      Order clone = (Order) super.clone();
+      clone.itemsOnOrder = new ArrayList<>();
+      for (ItemOnOrder itemOnOrder : itemsOnOrder) {
+        clone.itemsOnOrder.add(itemOnOrder.clone());
+      }
+
+      return clone;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

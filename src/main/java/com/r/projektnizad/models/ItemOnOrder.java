@@ -1,11 +1,12 @@
 package com.r.projektnizad.models;
 
 import com.r.projektnizad.enums.ItemOnOrderStatus;
+import com.r.projektnizad.models.change.ChangeAccessor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ItemOnOrder extends Entity implements Serializable {
+public class ItemOnOrder extends Entity implements Serializable, Cloneable, ChangeAccessor {
   private Item item;
   private LocalDateTime orderTime;
   private ItemOnOrderStatus status;
@@ -44,5 +45,21 @@ public class ItemOnOrder extends Entity implements Serializable {
   @Override
   public String getEntityName() {
     return "stavka narudžbe";
+  }
+
+  @Override
+  public ItemOnOrder clone() {
+    try {
+      ItemOnOrder clone = (ItemOnOrder) super.clone();
+      clone.setItem(item.clone());
+      return clone;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
+  }
+
+  @Override
+  public String access() {
+    return this.getItem().getName();
   }
 }

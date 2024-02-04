@@ -1,6 +1,7 @@
 package com.r.projektnizad.models.change;
 
 import com.r.projektnizad.decorators.NamedHistoryMember;
+import com.r.projektnizad.decorators.NamedHistoryMemberWithAccessor;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.Entity;
 import com.r.projektnizad.models.User;
@@ -9,8 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class Change<T extends Entity> implements Serializable {
   T oldEntity, newEntity;
@@ -26,6 +26,16 @@ public abstract class Change<T extends Entity> implements Serializable {
     this.newEntity = newEntity;
     this.dateTime = LocalDateTime.now();
     this.user = Main.authService.getCurrentUser().orElse(null);
+  }
+
+  public static List<?> convertObjectToList(Object obj) {
+    List<?> list = new ArrayList<>();
+    if (obj.getClass().isArray()) {
+      list = Arrays.asList((Object[]) obj);
+    } else if (obj instanceof Collection) {
+      list = new ArrayList<>((Collection<?>) obj);
+    }
+    return list;
   }
 
   public Map<String, String> diff() {
@@ -56,6 +66,10 @@ public abstract class Change<T extends Entity> implements Serializable {
         // is annotation present
         boolean hasCustomName = field.isAnnotationPresent(NamedHistoryMember.class);
 
+        if (!hasCustomName) continue;
+
+        String name = field.getAnnotation(NamedHistoryMember.class).value();
+
         if (onlyName && !field.getName().equals("name")) continue;
         if (!oldValue.equals(newValue)) {
           // if values are not primitive types, recursively call diff
@@ -65,11 +79,41 @@ public abstract class Change<T extends Entity> implements Serializable {
             diff.putAll(((Change<?>) new ModifyChange<>((Entity) oldValue, (Entity) newValue)).diff(true, prefix + entityName + " "));
             continue;
           }
+          // if list, map or set, just show additions and removals
+          if (oldValue instanceof List<?> && newValue instanceof List<?> && !oldValue.equals(newValue)) {
+            try {
+              @SuppressWarnings("unchecked")
+              List<? extends Entity> oldList = (List<? extends Entity>) convertObjectToList(oldValue);
+              @SuppressWarnings("unchecked")
+              List<? extends Entity> newList = (List<? extends Entity>) convertObjectToList(newValue);
+              for (Entity e : oldList) {
+                if (!newList.contains(e)) {
+                  // check if field is instance of ChangeAccessor and if it is, use it to get the name
+                  if (e instanceof ChangeAccessor ch) {
+                    String entityInListName = ch.access();
+                    diff.put(name, "Maknut -> " + entityInListName);
+                  }
+                }
+              }
+
+              for (Entity e : newList) {
+                if (!oldList.contains(e)) {
+                  // check if field is instance of ChangeAccessor and if it is, use it to get the name
+                  if (e instanceof ChangeAccessor ch) {
+                    String entityInListName = ch.access();
+                    diff.put(name, "Dodan -> " + entityInListName);
+                  }
+                }
+              }
+            } catch (Exception e) {
+              logger.error("Error while comparing lists", e);
+            }
+            continue;
+          }
 
           if (onlyName) {
             diff.put(prefix, oldValue + " -> " + newValue);
           } else {
-            String name = hasCustomName ? field.getAnnotation(NamedHistoryMember.class).value() : field.getName();
             diff.put(name, oldValue + " -> " + newValue);
           }
         }
