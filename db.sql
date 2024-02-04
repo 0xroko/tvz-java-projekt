@@ -62,6 +62,7 @@ values (0, 'Burger', 'Burger'),
        (9, 'Extra', 'Extra'),
        (10, 'Cocktail', 'Cocktail');
 
+/*set all items that have category that is being deleted to */
 
 insert into item (name, description, price, category_id, stock, item_type, default_stock_increment, preparation_time)
 values ('Cheeseburger', 'Cheeseburger', 5.00, 1, 100, 1, 1, '00:05:00'),
@@ -131,7 +132,18 @@ create table `order`
         primary key (id),
     constraint order_table_id_fk
         foreign key (table_id) references `table` (id)
+
+
 );
+
+/* delete all order items on delete*/
+create trigger order_item_delete
+    before delete
+    on `order`
+    for each row
+    delete
+    from item_on_order
+    where item_on_order.order_id = old.id;
 
 
 create table item_on_order
@@ -161,6 +173,3 @@ values (1, 1, 0, 'Obitelj Voda'),
        (1, 1, 0, 'Obitelj 3'),
        (1, 1, 0, 'Obitelj 4'),
        (8, 1, 0, 'Obitelj 5');
-
-
-

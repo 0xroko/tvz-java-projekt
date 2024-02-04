@@ -51,8 +51,6 @@ public class Navigator {
 
   static public void navigate(String resourcePath, String title) {
     cleanUpLastScene();
-
-
     var window = loadParent(resourcePath);
     Scene scene = new Scene(window);
     applyStyles(scene);
@@ -94,5 +92,11 @@ public class Navigator {
     }
     applyStyles(controller.getDialogPane().getScene());
 
+    // add on close listener to clean up
+    controller.setOnCloseRequest(e -> {
+      if (controller instanceof CleanableScene sc) {
+        sc.cleanup();
+      }
+    });
   }
 }

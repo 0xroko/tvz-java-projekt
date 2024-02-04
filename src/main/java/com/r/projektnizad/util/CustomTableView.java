@@ -17,6 +17,9 @@ public class CustomTableView<T> extends TableView<T> {
     super();
     Platform.runLater(() -> {
       scrollBar = (ScrollBar) this.lookup(".scroll-bar:vertical");
+      if (scrollBar == null) {
+        return;
+      }
       scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
         if (currentlyCleaning) {
           return;
@@ -52,11 +55,17 @@ public class CustomTableView<T> extends TableView<T> {
     this.getColumns().stream().forEach((column) -> {
       //Minimal width = columnheader
       Text t = new Text(column.getText());
-      double max = t.getLayoutBounds().getWidth();
+      t.getStyleClass().add("column-header");
+      double max = t.getLayoutBounds().getWidth() * 1.2;
       for (int i = 0; i < this.getItems().size(); i++) {
         //cell must not be empty
         if (column.getCellData(i) != null) {
           t = new Text(column.getCellData(i).toString());
+          t.getStyleClass().add("cell");
+          // if "Datum/Vrijeme" column, set max width to 150
+          if (column.getText().equals("Datum/Vrijeme")) {
+            max = 150;
+          }
           double calcwidth = t.getLayoutBounds().getWidth();
           //remember new max-width
           if (calcwidth > max) {
@@ -69,7 +78,7 @@ public class CustomTableView<T> extends TableView<T> {
       if (System.getProperty("os.name").toLowerCase().contains("mac")) {
         column.setPrefWidth(max + 60.0d);
       } else {
-        column.setPrefWidth(max + 40.0d);
+        column.setPrefWidth(max + 23);
       }
     });
 
@@ -81,7 +90,7 @@ public class CustomTableView<T> extends TableView<T> {
       totalWidth += column.getWidth();
     }
     if (totalWidth < this.getWidth()) {
-      lastColumn.setPrefWidth(lastColumn.getPrefWidth() + this.getWidth() - totalWidth - 20.0d);
+      lastColumn.setPrefWidth(lastColumn.getPrefWidth() + this.getWidth() - totalWidth - 10.0d);
     }
   }
 

@@ -1,45 +1,36 @@
 package com.r.projektnizad.controllers;
 
+import atlantafx.base.theme.Styles;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.util.AppDialog;
-import com.r.projektnizad.util.ControlClassSetter;
+import com.r.projektnizad.util.Config;
 import com.r.projektnizad.util.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import net.synedra.validatorfx.Check;
 import net.synedra.validatorfx.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Login {
-
   private final Logger logger = LoggerFactory.getLogger(Login.class);
-
   private final Validator validator = new Validator();
-
   public TextField usernameInput;
   public PasswordField passwordInput;
 
-  private ControlClassSetter userNameErrorClassSetter;
-  private ControlClassSetter passwordErrorClassSetter;
-
   @FXML
   void initialize() {
-    userNameErrorClassSetter = new ControlClassSetter(usernameInput, "input-field-error");
-    passwordErrorClassSetter = new ControlClassSetter(passwordInput, "input-field-error");
 
     validator.createCheck()
             .dependsOn("username", usernameInput.textProperty())
             .withMethod(c -> {
               String userName = c.get("username");
               if (userName.length() < 3) {
-                userNameErrorClassSetter.set();
+                usernameInput.pseudoClassStateChanged(Styles.STATE_DANGER, true);
                 c.error("Korisničko ime mora imati najmanje 3 znaka.");
               } else {
-                userNameErrorClassSetter.unset();
+                usernameInput.pseudoClassStateChanged(Styles.STATE_DANGER, false);
               }
             })
             .decorates(usernameInput);
@@ -48,20 +39,14 @@ public class Login {
             .dependsOn("password", passwordInput.textProperty())
             .withMethod(c -> {
               String password = c.get("password");
-              if (password.length() < 4) {
-                c.error("Lozinka mora imati najmanje 4 znaka.");
-                passwordErrorClassSetter.set();
+              if (password.length() < Config.PASSWORD_MIN_LENGTH) {
+                c.error("Lozinka prekratka.");
+                passwordInput.pseudoClassStateChanged(Styles.STATE_DANGER, true);
               } else {
-                passwordErrorClassSetter.unset();
+                passwordInput.pseudoClassStateChanged(Styles.STATE_DANGER, false);
               }
             })
             .decorates(passwordInput);
-  }
-
-  void clearErrors() {
-    userNameErrorClassSetter.unset();
-    passwordErrorClassSetter.unset();
-    usernameInput.setText("");
   }
 
   @FXML
@@ -78,7 +63,6 @@ public class Login {
       Navigator.navigate("hello-view.fxml", "Pozdrav");
     } else {
       new AppDialog().showErrorMessage("Greška", "Pogrešno korisničko ime ili lozinka.");
-      clearErrors();
       logger.info("User " + usernameInput.getText() + " failed to log in.");
     }
   }

@@ -4,13 +4,14 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
+import javafx.scene.input.KeyCharacterCombination;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class TableViewContextMenu {
 
-  public static <T> void build(TableRow<T> row, Map<String, Consumer<T>> actions) {
+  public static <T> ContextMenu build(TableRow<T> row, Map<String, Consumer<T>> actions) {
     ContextMenu contextMenu = new ContextMenu();
     actions.forEach((name, action) -> {
       MenuItem menuItem = new MenuItem(name);
@@ -24,6 +25,6 @@ public class TableViewContextMenu {
         event1.consume();
       }
     });
-
+    return contextMenu;
   }
 }

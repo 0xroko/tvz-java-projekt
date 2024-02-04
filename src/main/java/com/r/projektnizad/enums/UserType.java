@@ -1,6 +1,10 @@
 package com.r.projektnizad.enums;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum UserType {
+  DELETE(-1, "[izbrisan]"),
   ADMIN(0, "Admin"),
   MANAGER(1, "Menadžer"),
   WAITER(2, "Konobar"),
@@ -30,5 +34,9 @@ public enum UserType {
       }
     }
     return null;
+  }
+
+  public static List<UserType> getValues() {
+    return Arrays.stream(UserType.values()).filter(type -> !type.equals(UserType.DELETE)).toList();
   }
 }

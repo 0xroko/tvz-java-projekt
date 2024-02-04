@@ -4,7 +4,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.ComboBoxListCell;
-import javafx.util.converter.LocalDateStringConverter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -61,7 +60,7 @@ public class Util {
   }
 
 
-  public static <T> void comboBoxCellFactorySetters(ComboBox<T> comboBox, Function<T, String> predicate) {
+  public static <T> void comboBoxCellFactorySetter(ComboBox<T> comboBox, Function<T, String> predicate) {
     comboBox.setButtonCell(getComboBoxListCell(predicate));
     comboBox.setCellFactory(param -> getComboBoxListCell(predicate));
   }

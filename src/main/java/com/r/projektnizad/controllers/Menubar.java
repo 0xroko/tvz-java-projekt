@@ -56,4 +56,8 @@ public class Menubar {
     Main.authService.logout();
     Navigator.navigate("login.fxml", "Prijava");
   }
+
+  public void viewUsers(ActionEvent actionEvent) {
+    Navigator.navigate("user/view.fxml", "Korisnici");
+  }
 }
