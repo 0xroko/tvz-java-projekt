@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import net.synedra.validatorfx.Validator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -44,7 +45,7 @@ public class AddDialog extends Dialog<Order> {
     datePicker.getEditor().setOpacity(1);
 
     tableComboBox.getItems().addAll(new TableRepository().getAll());
-    Util.comboBoxCellFactorySetters(tableComboBox, Table::getName);
+    Util.comboBoxCellFactorySetter(tableComboBox, Table::getName);
 
     dateTimeField.visibleProperty().bind(nowCheckBox.selectedProperty().not());
     // revalidate time field when nowCheckBox is selected
@@ -79,6 +80,12 @@ public class AddDialog extends Dialog<Order> {
     Navigator.asDialog("order/add.fxml", this);
 
     boolean isEdit = order.isPresent();
+
+    // if is edit and order status is done, disable the nowCheckBox and the date picker
+    if (isEdit && order.get().getStatus() == OrderStatus.IN_PROGRESS) {
+      nowCheckBox.setDisable(true);
+      datePicker.setDisable(true);
+    }
 
     if (isEdit) {
       titleLabel.setText("Izmjena narudžbe");
@@ -118,7 +125,7 @@ public class AddDialog extends Dialog<Order> {
               tableComboBox.getSelectionModel().getSelectedItem(),
               nowCheckBox.isSelected() ? OrderStatus.IN_PROGRESS : OrderStatus.RESERVED,
               Main.authService.getCurrentUser().get().getId(),
-              datePicker.getValue().atTime(Util.parseTime(timeTextField.getText())),
+              nowCheckBox.isSelected() ? LocalDateTime.now() : datePicker.getValue().atTime(Util.parseTime(timeTextField.getText())),
               detailsTextField.getText()
       );
     });

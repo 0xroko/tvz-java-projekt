@@ -41,17 +41,23 @@ public class View implements CleanableScene {
   public TableColumn<Order, Long> numberOfItemsTableColumn;
   public TableColumn<Order, String> tableTableColumn;
   public TableColumn<Order, String> noteTableColumn;
-
+  public TableColumn<Order, String> itemsTableColumn;
   private final OrderRepository orderRepository = new OrderRepository();
   private final SignaledTaskThread<List<Order>, Map<String, Filter.FilterItem>> signaledTaskThread = new SignaledTaskThread<>(orderRepository::filter);
   private final Map<String, Filter.FilterItem> filters = new HashMap<>();
+  static private final String startButton = "Započni";
+  static private final String doneButton = "Završi";
+  static private final String editButton = "Izmijeni";
+  static private final String deleteButton = "Obriši";
+  static private final String viewButton = "Pregledaj";
+
 
   public void initialize() {
     Navigator.setController(this);
 
     orderStatusComboBox.setItems(FXCollections.observableArrayList(OrderStatus.values()));
     orderStatusComboBox.getSelectionModel().selectFirst();
-    Util.comboBoxCellFactorySetters(orderStatusComboBox, OrderStatus::getName);
+    Util.comboBoxCellFactorySetter(orderStatusComboBox, OrderStatus::getName);
 
     orderDateDatePicker.setValue(LocalDateTime.now().toLocalDate());
     orderDateDatePicker.getEditor().setDisable(true);
@@ -75,11 +81,15 @@ public class View implements CleanableScene {
         return new SimpleObjectProperty<>(u.map(User::getUsername).orElse("NEPOZNAT"));
       }
     });
+    itemsTableColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOrderItemsString()));
 
     Map<String, Consumer<Order>> actions = new LinkedHashMap<>();
-    actions.put("Pregledaj", this::openOrderView);
-    actions.put("Izmijeni", this::openOrderEdit);
-    actions.put("Obriši", this::deleteOrder);
+
+    actions.put(viewButton, this::openOrderView);
+    actions.put(startButton, this::setOrderInProgress);
+    actions.put(doneButton, this::setOrderDone);
+    actions.put(editButton, this::openOrderEdit);
+    actions.put(deleteButton, this::deleteOrder);
 
     orderTableView.setRowFactory(tableView -> {
       TableRow<Order> row = new TableRow<>();
@@ -88,7 +98,21 @@ public class View implements CleanableScene {
           openOrderView(row.getItem());
         }
       });
-      TableViewContextMenu.build(row, actions);
+      ContextMenu contextMenu = TableViewContextMenu.build(row, actions);
+      // remove start and done from context menu if the order is already in that state
+      row.itemProperty().addListener((observable, oldValue, newValue) -> {
+        if (newValue != null) {
+          if (newValue.getStatus() == OrderStatus.IN_PROGRESS) {
+            contextMenu.getItems().removeIf(item -> item.getText().equals(startButton));
+          } else if (newValue.getStatus() == OrderStatus.DONE) {
+            contextMenu.getItems().removeIf(item -> item.getText().equals(doneButton));
+            contextMenu.getItems().removeIf(item -> item.getText().equals(startButton));
+            contextMenu.getItems().removeIf(item -> item.getText().equals(editButton));
+          } else if (newValue.getStatus() == OrderStatus.RESERVED) {
+            contextMenu.getItems().removeIf(item -> item.getText().equals(doneButton));
+          }
+        }
+      });
       return row;
     });
 
@@ -103,9 +127,9 @@ public class View implements CleanableScene {
 
     orderStatusComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue != null && !newValue.equals(OrderStatus.ALL)) {
-        filters.put("status", new Filter.FilterItem(newValue.getCode().toString(), Filter.FilterType.EQUAL));
+        filters.put("order.status", new Filter.FilterItem(newValue.getCode().toString(), Filter.FilterType.EQUAL));
       } else {
-        filters.remove("status");
+        filters.remove("order.status");
       }
       signaledTaskThread.signal(filters);
     });
@@ -119,8 +143,11 @@ public class View implements CleanableScene {
     signaledTaskThread.signal(filters);
   }
 
-  private void openOrderView(Order actionEvent) {
-
+  private void openOrderView(Order order) {
+    new OrderItems(order).showAndWait().ifPresent(t -> {
+              signaledTaskThread.signal();
+            }
+    );
   }
 
   private void openOrderEdit(Order order) {
@@ -146,6 +173,23 @@ public class View implements CleanableScene {
       signaledTaskThread.signal();
     });
   }
+
+  public void setOrderInProgress(Order order) {
+    Order old = order.clone();
+    order.setStatus(OrderStatus.IN_PROGRESS);
+    orderRepository.update(order.getId(), order);
+    new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+    signaledTaskThread.signal();
+  }
+
+  public void setOrderDone(Order order) {
+    Order old = order.clone();
+    order.setStatus(OrderStatus.DONE);
+    orderRepository.update(order.getId(), order);
+    new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+    signaledTaskThread.signal();
+  }
+
 
   @Override
   public void cleanup() {

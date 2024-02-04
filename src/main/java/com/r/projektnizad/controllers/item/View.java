@@ -65,7 +65,7 @@ public class View implements CleanableScene {
 
     categorySearchComboBox.setItems(FXCollections.observableArrayList(new CategoryRepository().getAll()));
     categorySearchComboBox.getItems().addFirst(new Category(-1L, "Sve", "Sve kategorije"));
-    Util.comboBoxCellFactorySetters(categorySearchComboBox, Category::getName);
+    Util.comboBoxCellFactorySetter(categorySearchComboBox, Category::getName);
 
     idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getId()).asObject());
     nameTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getName()));
