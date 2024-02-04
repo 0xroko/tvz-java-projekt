@@ -31,7 +31,7 @@
                     <FontIcon iconLiteral="fth-log-out" iconSize="14"/>
                 </graphic>
             </MenuItem>
-            <MenuItem text="Korisnici">
+            <MenuItem text="Korisnici" onAction="#viewUsers">
                 <graphic>
                     <FontIcon iconLiteral="fth-users" iconSize="14"/>
                 </graphic>

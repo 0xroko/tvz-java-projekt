@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 public class User extends Entity implements Serializable {
@@ -91,5 +92,22 @@ public class User extends Entity implements Serializable {
 
   public String getUsernameWithType() {
     return username + " (" + userType.getName() + ")";
+  }
+
+  public void setPassword(UserPassword password) {
+    this.password = password;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return Objects.equals(username, user.username) && Objects.equals(password, user.password) && userType == user.userType;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(username, password, userType);
   }
 }

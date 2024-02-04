@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import atlantafx.base.controls.PasswordTextField?>
+<?import javafx.scene.control.CheckBox?>
+<VBox alignment="CENTER" prefHeight="890.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1"
+      xmlns="http://javafx.com/javafx/21.0.1">
+    <VBox alignment="CENTER_LEFT" maxWidth="300" spacing="20.0" VBox.vgrow="ALWAYS">
+        <Label fx:id="titleLabel" styleClass="title-2" text="Dodaj korisnika"/>
+        <VBox>
+            <Label text="Ime korisnika"/>
+            <TextField fx:id="userNameTextField"/>
+        </VBox>
+        <VBox>
+            <Label text="Rola"/>
+            <ComboBox fx:id="roleComboBox"/>
+        </VBox>
+        <VBox fx:id="passwordSection">
+            <VBox>
+                <Label text="Lozinka"/>
+                <PasswordTextField fx:id="passwordTextField"/>
+            </VBox>
+            <VBox>
+                <Label text="Lozinka ponovno"/>
+                <PasswordTextField fx:id="passwordAgainTextField"/>
+            </VBox>
+        </VBox>
+    </VBox>
+</VBox>

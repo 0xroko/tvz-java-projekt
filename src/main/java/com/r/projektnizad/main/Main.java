@@ -35,4 +35,5 @@ public class Main extends Application {
     authService = new AuthService();
     launch();
   }
+
 }
