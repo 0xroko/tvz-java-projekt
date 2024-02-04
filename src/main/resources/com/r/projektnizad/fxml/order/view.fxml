@@ -57,14 +57,15 @@
         </VBox>
         <CustomTableView fx:id="orderTableView" styleClass="dense" GridPane.rowIndex="3">
             <columns>
-                <TableColumn fx:id="idTableColumn" prefWidth="75.0" text="ID"/>
-                <TableColumn fx:id="dateTableColumn" prefWidth="75.0" text="Datum"/>
+                <TableColumn fx:id="idTableColumn" prefWidth="22.0" text="ID"/>
+                <TableColumn fx:id="dateTableColumn" prefWidth="120.0" text="Datum/Vrijeme"/>
                 <TableColumn fx:id="tableTableColumn" prefWidth="75.0" text="Stol"/>
                 <TableColumn fx:id="noteTableColumn" prefWidth="75.0" text="Detalji"/>
                 <TableColumn fx:id="statusTableColumn" prefWidth="75.0" text="Status"/>
                 <TableColumn fx:id="userTableColumn" prefWidth="75.0" text="Korisnik"/>
-                <TableColumn fx:id="priceTableColumn" prefWidth="75.0" text="Cijena"/>
-                <TableColumn fx:id="numberOfItemsTableColumn" prefWidth="75.0" text="Broj stvari"/>
+                <TableColumn fx:id="priceTableColumn" prefWidth="22.0" text="Cijena"/>
+                <TableColumn fx:id="numberOfItemsTableColumn" prefWidth="33.0" text="Broj stvari"/>
+                <TableColumn fx:id="itemsTableColumn" prefWidth="90.0" text="Stavke"/>
             </columns>
         </CustomTableView>
     </GridPane>

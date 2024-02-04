@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public class OrderRepository implements Dao<Order> {
-
   private static final Logger logger = LoggerFactory.getLogger(OrderRepository.class);
 
   @Override
@@ -33,9 +32,14 @@ public class OrderRepository implements Dao<Order> {
     ArrayList<ItemOnOrder> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       Statement stmt = conn.createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT * FROM `item_on_order` JOIN `item` i on i.'id' = 'item_on_order'.'item_id' " +
-              "JOIN category c on c.id = i.id" +
-              " WHERE 'item_on_order'.'order_id' = " + orderId);
+      String query = """
+                             SELECT * FROM item_on_order JOIN item i on i.id = item_on_order.item_id
+                             JOIN category c on c.id = i.category_id
+                             WHERE item_on_order.order_id =
+                             """ + " " + orderId + ";";
+      logger.info(query);
+
+      ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
         items.add(mapToItemOnOrder(rs));
       }
@@ -43,6 +47,47 @@ public class OrderRepository implements Dao<Order> {
       logger.error("Error getting items on order", e);
     }
     return items;
+  }
+
+  public void deleteItemOnOrder(long id) {
+    try (Connection conn = Database.connect()) {
+      PreparedStatement stmt = conn.prepareStatement("DELETE FROM item_on_order WHERE id = ?");
+      stmt.setLong(1, id);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      logger.error("Error while deleting item on order", e);
+    }
+  }
+
+  public void updateItemOnOrder(long id, ItemOnOrder itemOnOrder) {
+    try (Connection conn = Database.connect()) {
+      PreparedStatement stmt = conn.prepareStatement("UPDATE item_on_order SET item_id = ?, start_time = ?, status = ? WHERE id = ?");
+      stmt.setLong(1, itemOnOrder.getItem().getId());
+      stmt.setTimestamp(2, Timestamp.valueOf(itemOnOrder.getOrderTime()));
+      stmt.setLong(3, itemOnOrder.getStatus().getCode());
+      stmt.setLong(4, id);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      logger.error("Error while updating item on order", e);
+    }
+  }
+
+  public void saveItemOnOrder(Order o, ItemOnOrder itemOnOrder) {
+    try (Connection conn = Database.connect()) {
+      PreparedStatement stmt = conn.prepareStatement("INSERT INTO item_on_order (item_id, start_time, status, order_id) VALUES (?, ?, ?, ?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+      stmt.setLong(1, itemOnOrder.getItem().getId());
+      stmt.setTimestamp(2, Timestamp.valueOf(itemOnOrder.getOrderTime()));
+      stmt.setLong(3, itemOnOrder.getStatus().getCode());
+      stmt.setLong(4, o.getId());
+      stmt.executeUpdate();
+      ResultSet rs = stmt.getGeneratedKeys();
+      if (rs.next()) {
+        itemOnOrder.setId(rs.getLong(1));
+      }
+      o.getItemsOnOrder().add(itemOnOrder);
+    } catch (SQLException e) {
+      logger.error("Error while saving item on order", e);
+    }
   }
 
   private ItemOnOrder mapToItemOnOrder(ResultSet rs) throws SQLException {
@@ -76,7 +121,7 @@ public class OrderRepository implements Dao<Order> {
   }
 
   private Order mapToOrder(ResultSet rs) throws SQLException {
-    return new Order(
+    Order o = new Order(
             rs.getLong("id"),
             new ArrayList<>(),
             new Table(rs.getLong("table_id"), rs.getString("t.name"), rs.getString("t.description"), rs.getLong("t.seats")),
@@ -85,6 +130,17 @@ public class OrderRepository implements Dao<Order> {
             rs.getTimestamp("order_time").toLocalDateTime(),
             rs.getString("note")
     );
+
+    if (rs.getLong("count") > 0) {
+      o.setOrderItemsCount(rs.getLong("count"));
+    }
+    if (rs.getBigDecimal("total") != null) {
+      o.setOrderPriceSum(rs.getBigDecimal("total"));
+    }
+    if (rs.getString("items") != null) {
+      o.setOrderItemsString(rs.getString("items"));
+    }
+    return o;
   }
 
   @Override
@@ -138,8 +194,15 @@ public class OrderRepository implements Dao<Order> {
     ArrayList<Order> orders = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       Statement stmt = conn.createStatement();
-      String query = "SELECT * FROM `order` JOIN `table` t ON t.id = `order`.table_id";
+      String query = """
+              SELECT `order`.*, COALESCE(SUM(i.price), 0) AS total, COALESCE(CONCAT(GROUP_CONCAT(i.name SEPARATOR ', ' LIMIT 3 ), '...'), '') AS items, COUNT(i.name) AS count, t.*
+              FROM `order`
+                  LEFT JOIN `table` t ON t.id = `order`.table_id
+                  LEFT JOIN `item_on_order` oi ON oi.order_id = `order`.id
+                  LEFT JOIN `item` i ON i.id = oi.item_id
+              """;
       query = Filter.build(query, filters);
+      query += " GROUP BY `order`.id";
       logger.info(query);
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
