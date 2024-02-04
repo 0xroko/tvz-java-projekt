@@ -9,7 +9,8 @@ module com.r.projektnizad {
   requires org.controlsfx.controls;
   requires com.dlsc.formsfx;
   requires net.synedra.validatorfx;
-
+  requires org.apache.commons.text;
+  requires org.apache.commons.lang3;
   requires atlantafx.base;
   requires atlantafx.styles;
 
@@ -24,10 +25,14 @@ module com.r.projektnizad {
   opens com.r.projektnizad.controllers.item to javafx.fxml;
   opens com.r.projektnizad.controllers to javafx.fxml;
   opens com.r.projektnizad.controllers.order to javafx.fxml;
+  opens com.r.projektnizad.controllers.user to javafx.fxml;
+  opens com.r.projektnizad.util.controlfx to javafx.fxml;
 
   exports com.r.projektnizad.controllers.item;
   exports com.r.projektnizad.controllers.category;
   exports com.r.projektnizad.controllers.order;
+  exports com.r.projektnizad.controllers.user;
+
 
   exports com.r.projektnizad.main;
   exports com.r.projektnizad.threads;
@@ -38,4 +43,5 @@ module com.r.projektnizad {
   exports com.r.projektnizad.controllers;
   exports com.r.projektnizad.enums;
   exports com.r.projektnizad.exceptions;
+  exports com.r.projektnizad.util.controlfx;
 }
