@@ -21,19 +21,20 @@ module com.r.projektnizad {
   requires org.kordamp.ikonli.feather;
 
   opens com.r.projektnizad.main to javafx.fxml;
+  opens com.r.projektnizad.controllers to javafx.fxml;
   opens com.r.projektnizad.controllers.category to javafx.fxml;
   opens com.r.projektnizad.controllers.item to javafx.fxml;
-  opens com.r.projektnizad.controllers to javafx.fxml;
   opens com.r.projektnizad.controllers.order to javafx.fxml;
   opens com.r.projektnizad.controllers.user to javafx.fxml;
+  opens com.r.projektnizad.controllers.table to javafx.fxml;
   opens com.r.projektnizad.util.controlfx to javafx.fxml;
 
   exports com.r.projektnizad.controllers.item;
   exports com.r.projektnizad.controllers.category;
   exports com.r.projektnizad.controllers.order;
   exports com.r.projektnizad.controllers.user;
-
-
+  exports com.r.projektnizad.controllers.table;
+  
   exports com.r.projektnizad.main;
   exports com.r.projektnizad.threads;
   exports com.r.projektnizad.models;

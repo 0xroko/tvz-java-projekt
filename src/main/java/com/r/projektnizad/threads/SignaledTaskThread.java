@@ -17,7 +17,6 @@ public class SignaledTaskThread<T, P> extends Thread {
   private final Object lock = new Object();
   private boolean taskPending = false;
   private final ObservableThreadTask<T, P> task = new ObservableThreadTask<>();
-
   private Long period = 0L;
 
   public SignaledTaskThread(Function<P, T> fn) {
@@ -45,12 +44,7 @@ public class SignaledTaskThread<T, P> extends Thread {
       try {
         while (!taskPending) {
           synchronized (lock) {
-//            if (period > 0) {
-//              lock.wait(period);
-//              taskPending = true;
-//            } else {
             lock.wait();
-//            }
           }
         }
         task.call();

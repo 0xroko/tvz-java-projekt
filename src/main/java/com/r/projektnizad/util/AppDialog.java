@@ -5,11 +5,13 @@ import javafx.scene.control.ButtonType;
 import org.controlsfx.dialog.ExceptionDialog;
 
 public class AppDialog {
-  public void showExceptionMessage(Throwable e) {
+  public ExceptionDialog showExceptionMessage(Throwable e) {
     ExceptionDialog alert = new ExceptionDialog(e);
     alert.setTitle("Greška");
     alert.setHeaderText("Došlo je do greške :(");
+    alert.setContentText(e.getMessage());
     alert.showAndWait();
+    return alert;
   }
 
   public void showErrorMessage(String title, String message) {

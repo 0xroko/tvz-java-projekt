@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class TableViewContextMenu {
-
   public static <T> ContextMenu build(TableRow<T> row, Map<String, Consumer<T>> actions) {
     ContextMenu contextMenu = new ContextMenu();
     actions.forEach((name, action) -> {

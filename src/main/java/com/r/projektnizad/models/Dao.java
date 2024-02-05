@@ -1,5 +1,6 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.util.Filter;
 
 import java.util.List;
@@ -8,16 +9,16 @@ import java.util.Optional;
 
 public interface Dao<T extends Entity> {
 
-  Optional<T> get(long id);
+  Optional<T> get(long id) throws DatabaseActionFailException;
 
-  List<T> getAll();
+  List<T> getAll() throws DatabaseActionFailException;
 
-  void save(T t);
+  void save(T t) throws DatabaseActionFailException;
 
-  void update(Long id, T t);
+  void update(Long id, T t) throws DatabaseActionFailException;
 
-  void delete(Long id);
+  void delete(Long id) throws DatabaseActionFailException;
 
-  List<T> filter(Map<String, Filter.FilterItem> filters);
+  List<T> filter(Map<String, Filter.FilterItem> filters) throws DatabaseActionFailException;
 }
 

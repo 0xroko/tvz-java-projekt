@@ -1,23 +1,27 @@
 package com.r.projektnizad.controllers;
 
+import atlantafx.base.controls.PasswordTextField;
 import atlantafx.base.theme.Styles;
+import com.r.projektnizad.exceptions.InvalidPasswordException;
+import com.r.projektnizad.exceptions.UserNotFoundException;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.util.AppDialog;
 import com.r.projektnizad.util.Config;
 import com.r.projektnizad.util.Navigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import net.synedra.validatorfx.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Login {
-  private final Logger logger = LoggerFactory.getLogger(Login.class);
+import static com.r.projektnizad.util.Config.STARTING_SCREEN;
+
+public class LoginController {
+  private final Logger logger = LoggerFactory.getLogger(LoginController.class);
   private final Validator validator = new Validator();
   public TextField usernameInput;
-  public PasswordField passwordInput;
+  public PasswordTextField passwordInput;
 
   @FXML
   void initialize() {
@@ -56,14 +60,13 @@ public class Login {
       return;
     }
 
-    // TODO ERRORS
-    boolean loggedIn = Main.authService.authenticate(usernameInput.getText(), passwordInput.getText());
-    if (loggedIn) {
-      logger.info("User " + usernameInput.getText() + " logged in.");
-      Navigator.navigate("hello-view.fxml", "Pozdrav");
-    } else {
-      new AppDialog().showErrorMessage("Greška", "Pogrešno korisničko ime ili lozinka.");
-      logger.info("User " + usernameInput.getText() + " failed to log in.");
+    try {
+      Main.authService.authenticate(usernameInput.getText(), passwordInput.getPassword());
+      Navigator.navigate(STARTING_SCREEN, "Narudžbe");
+    } catch (InvalidPasswordException e) {
+      new AppDialog().showErrorMessage("Greška", "Pogrešno lozinka.");
+    } catch (UserNotFoundException e) {
+      new AppDialog().showErrorMessage("Greška", "Korisnik nije pronađen.");
     }
   }
 }

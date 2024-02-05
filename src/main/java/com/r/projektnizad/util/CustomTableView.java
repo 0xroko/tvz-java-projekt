@@ -35,6 +35,9 @@ public class CustomTableView<T> extends TableView<T> {
     this.getItems().clear();
     this.getItems().addAll(items);
     Platform.runLater(() -> {
+      if (this.scrollBar == null) {
+        return;
+      }
       this.scrollBar.setValue(lastScrollOffset.doubleValue());
       currentlyCleaning = false;
     });
@@ -90,7 +93,7 @@ public class CustomTableView<T> extends TableView<T> {
       totalWidth += column.getWidth();
     }
     if (totalWidth < this.getWidth()) {
-      lastColumn.setPrefWidth(lastColumn.getPrefWidth() + this.getWidth() - totalWidth - 10.0d);
+      lastColumn.setPrefWidth(lastColumn.getPrefWidth() + this.getWidth() - totalWidth - 20.0d);
     }
   }
 

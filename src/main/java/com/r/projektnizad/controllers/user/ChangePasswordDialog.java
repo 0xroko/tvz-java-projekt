@@ -31,10 +31,10 @@ public class ChangePasswordDialog extends Dialog<Boolean> {
     validator.createCheck()
             .dependsOn("passwordTextField", passwordTextField.textProperty())
             .withMethod(c -> {
-              if (passwordTextField.getText().length() < PASSWORD_MIN_LENGTH) {
+              if (passwordTextField.getPassword().length() < PASSWORD_MIN_LENGTH) {
                 c.error("Lozinka je prekratka");
               }
-              if (passwordTextField.getText().isEmpty()) {
+              if (passwordTextField.getPassword().isEmpty()) {
                 c.error("Lozinka je obavezna");
               }
             }).decorates(passwordTextField).immediate();
@@ -42,7 +42,7 @@ public class ChangePasswordDialog extends Dialog<Boolean> {
             .dependsOn("passwordAgainTextField", passwordAgainTextField.textProperty())
             .dependsOn("passwordTextField", passwordTextField.textProperty())
             .withMethod(c -> {
-              if (!passwordAgainTextField.getText().equals(passwordTextField.getText())) {
+              if (!passwordAgainTextField.getPassword().equals(passwordTextField.getPassword())) {
                 c.error("Lozinke se ne podudaraju");
               }
             }).decorates(passwordAgainTextField).immediate();
@@ -58,7 +58,7 @@ public class ChangePasswordDialog extends Dialog<Boolean> {
 
     setResultConverter(buttonType -> {
       if (buttonType == CustomButtonTypes.EDIT) {
-        boolean updated = Main.authService.updatePassword(userId, passwordTextField.getText());
+        boolean updated = Main.authService.updatePassword(userId, passwordTextField.getPassword());
         if (updated) {
           return true;
         }

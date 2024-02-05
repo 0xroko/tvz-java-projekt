@@ -10,6 +10,8 @@ import atlantafx.base.controls.PasswordTextField;
 import com.r.projektnizad.enums.UserType;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.User;
+import com.r.projektnizad.models.change.AddChange;
+import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.util.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,7 +20,7 @@ import net.synedra.validatorfx.Validator;
 
 import java.util.Optional;
 
-public class AddDialog extends Dialog<Boolean> {
+public class ModifyUserDialog extends Dialog<Boolean> {
   @FXML
   private TextField userNameTextField;
   @FXML
@@ -31,7 +33,6 @@ public class AddDialog extends Dialog<Boolean> {
   private VBox passwordSection;
   @FXML
   private Label titleLabel;
-
 
   Validator validator = new Validator();
 
@@ -57,7 +58,7 @@ public class AddDialog extends Dialog<Boolean> {
 
   }
 
-  public AddDialog(Optional<User> user) {
+  public ModifyUserDialog(Optional<User> user) {
     Navigator.asDialog("user/add.fxml", this);
     boolean isEdit = user.isPresent();
 
@@ -71,10 +72,10 @@ public class AddDialog extends Dialog<Boolean> {
       validator.createCheck()
               .dependsOn("passwordTextField", passwordTextField.textProperty())
               .withMethod(c -> {
-                if (passwordTextField.getText().isEmpty()) {
+                if (passwordTextField.getPassword().isEmpty()) {
                   c.error("Lozinka je obavezna");
                 }
-                if (passwordTextField.getText().length() < Config.PASSWORD_MIN_LENGTH) {
+                if (passwordTextField.getPassword().length() < Config.PASSWORD_MIN_LENGTH) {
                   c.error("Lozinka je prekratka");
                 }
               }).decorates(passwordTextField).immediate();
@@ -83,7 +84,7 @@ public class AddDialog extends Dialog<Boolean> {
               .dependsOn("passwordAgainTextField", passwordAgainTextField.textProperty())
               .dependsOn("passwordTextField", passwordTextField.textProperty())
               .withMethod(c -> {
-                if (!passwordAgainTextField.getText().equals(passwordTextField.getText())) {
+                if (!passwordAgainTextField.getPassword().equals(passwordTextField.getPassword())) {
                   c.error("Lozinke se ne podudaraju");
                 }
               }).decorates(passwordAgainTextField).immediate();
@@ -100,18 +101,18 @@ public class AddDialog extends Dialog<Boolean> {
           if (type != CustomButtonTypes.EDIT) {
             return null;
           }
-          User u = user.get();
+          User u = user.get().clone();
           u.setUsername(userNameTextField.getText());
           u.setUserType(roleComboBox.getValue());
-          if (!passwordTextField.getText().isEmpty()) {
-            u.setPassword(User.hashPassword(passwordTextField.getText()).get());
+          if (!passwordTextField.getPassword().isEmpty()) {
+            u.setPassword(User.hashPassword(passwordTextField.getPassword()).get());
           }
           Main.authService.editUser(u);
         } else {
-          Main.authService.register(userNameTextField.getText(), passwordTextField.getText(), roleComboBox.getValue());
+          Main.authService.register(userNameTextField.getText(), passwordTextField.getPassword(), roleComboBox.getValue());
         }
       }
-      return null;
+      return true;
     });
     getDialogPane().getButtonTypes().addAll(isEdit ? CustomButtonTypes.EDIT : CustomButtonTypes.ADD, CustomButtonTypes.CANCEL);
   }

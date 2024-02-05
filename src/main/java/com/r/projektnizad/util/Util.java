@@ -1,5 +1,6 @@
 package com.r.projektnizad.util;
 
+import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -12,6 +13,17 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.function.Function;
 
 public class Util {
+  public static <T, R> Function<T, R> wrapCheckedFunction(CheckedFunction<T, R> checkedFunction) {
+    return t -> {
+      try {
+        return checkedFunction.apply(t);
+      } catch (Exception e) {
+        Platform.runLater(() -> new AppDialog().showExceptionMessage(e));
+      }
+      return null;
+    };
+  }
+
   public static String formatDuration(Duration duration) {
     return String.format("%02d:%02d", duration.toHours(), duration.toMinutesPart());
   }

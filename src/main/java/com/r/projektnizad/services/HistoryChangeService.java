@@ -1,6 +1,6 @@
 package com.r.projektnizad.services;
 
-import com.r.projektnizad.exceptions.HistoryEntryNotFound;
+import com.r.projektnizad.exceptions.HistoryEntryNotFoundException;
 import com.r.projektnizad.models.Entity;
 import com.r.projektnizad.models.change.Change;
 import org.slf4j.Logger;
@@ -52,14 +52,14 @@ public class HistoryChangeService {
     return new ArrayList<>();
   }
 
-  public <T extends Entity> Optional<ArrayList<Change<T>>> readChanges(Date date) throws HistoryEntryNotFound {
+  public <T extends Entity> Optional<ArrayList<Change<T>>> readChanges(Date date) throws HistoryEntryNotFoundException {
     Path historyFile = getHistoryFile(date);
     lock.readLock().lock();
     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(historyFile.toFile()))) {
       return Optional.of(read(ois));
     } catch (FileNotFoundException e) {
       logger.info("History file not found");
-      throw new HistoryEntryNotFound();
+      throw new HistoryEntryNotFoundException();
     } catch (IOException | ClassNotFoundException e) {
       logger.error("Error reading history file", e);
     } finally {

@@ -1,6 +1,6 @@
 package com.r.projektnizad.threads;
 
-import com.r.projektnizad.exceptions.HistoryEntryNotFound;
+import com.r.projektnizad.exceptions.HistoryEntryNotFoundException;
 import com.r.projektnizad.models.Entity;
 import com.r.projektnizad.models.ObservableThreadTask;
 import com.r.projektnizad.models.change.Change;
@@ -33,13 +33,17 @@ public class ChangeReaderThread extends Thread {
     task.setFn(param -> {
       try {
         return historyChangeService.readChanges(param).orElse(new ArrayList<>());
-      } catch (HistoryEntryNotFound h) {
+      } catch (HistoryEntryNotFoundException h) {
         return new ArrayList<>();
       }
     });
     // set thread name
     this.setName("ChangeReaderThread");
     this.start();
+  }
+
+  public void end() {
+    this.interrupt();
   }
 
   @Override
@@ -50,7 +54,6 @@ public class ChangeReaderThread extends Thread {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
-        logger.info("Thread ended", e);
       }
     }
   }

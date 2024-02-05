@@ -18,16 +18,17 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static com.r.projektnizad.util.Config.STARTING_SCREEN;
+
 public class Main extends Application {
   public static AuthService authService;
 
   @Override
   public void start(Stage stage) {
     Navigator.rootStage = stage;
-    //Navigator.navigate("login.fxml", "Prijava!");
     Locale.setDefault(Locale.forLanguageTag("hr"));
     Application.setUserAgentStylesheet(new CupertinoDark().getUserAgentStylesheet());
-    Navigator.navigate("hello-view.fxml", "Prijava");
+    Navigator.navigate(STARTING_SCREEN, "Prijava");
   }
 
   public static void main(String[] args) {

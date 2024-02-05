@@ -1,5 +1,6 @@
 package com.r.projektnizad.models;
 
+import com.r.projektnizad.decorators.NamedHistoryMember;
 import com.r.projektnizad.enums.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,17 +14,18 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-public class User extends Entity implements Serializable {
+public class User extends Entity implements Serializable, Cloneable {
   static Logger logger = LoggerFactory.getLogger(User.class);
+  @NamedHistoryMember("Korisničko ime")
   private String username;
   private UserPassword password;
+  @NamedHistoryMember("Tip korisnika")
   private UserType userType;
 
   @Override
   public String getEntityName() {
     return "korisnik";
   }
-
 
   public String getUsername() {
     return username;
@@ -61,7 +63,8 @@ public class User extends Entity implements Serializable {
       KeySpec spec = new PBEKeySpec(password.toCharArray(), userPassword.salt(), 65536, 128);
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
-      return Arrays.equals(hash, userPassword.hash());
+      byte[] userHash = userPassword.hash();
+      return Arrays.equals(hash, userHash);
     } catch (Exception e) {
       logger.error("Error while verifying password: " + e.getMessage());
     }
@@ -109,5 +112,14 @@ public class User extends Entity implements Serializable {
   @Override
   public int hashCode() {
     return Objects.hash(username, password, userType);
+  }
+
+  @Override
+  public User clone() {
+    try {
+      return (User) super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

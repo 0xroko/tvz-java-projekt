@@ -4,7 +4,7 @@ import com.r.projektnizad.decorators.NamedHistoryMember;
 
 import java.io.Serializable;
 
-public class Table extends Entity implements Serializable {
+public class Table extends Entity implements Serializable, Cloneable {
   @NamedHistoryMember("Ime")
   private String name;
   @NamedHistoryMember("Opis")
@@ -46,5 +46,15 @@ public class Table extends Entity implements Serializable {
 
   public void setSeats(Long seats) {
     this.seats = seats;
+  }
+
+  @Override
+  public Table clone() {
+    try {
+      Table clone = (Table) super.clone();
+      return clone;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

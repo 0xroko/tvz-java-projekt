@@ -6,6 +6,7 @@ import com.r.projektnizad.models.change.Change;
 import com.r.projektnizad.threads.ChangeReaderThread;
 import com.r.projektnizad.util.CustomTableView;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.scene.control.ComboBox;
@@ -18,19 +19,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
-public class History implements CleanableScene {
+public final class HistoryController implements CleanableScene {
   public CustomTableView<Change<Entity>> historyTableView;
   public TableColumn<Change<?>, String> dateTableColumn;
   public TableColumn<Change<?>, String> entityNameTableColumn;
   public TableColumn<Change<?>, String> descriptionTableColumn;
-  public TableColumn<Change<?>, String> idTableColumn;
+  public TableColumn<Change<?>, Long> idTableColumn;
   public TableColumn<Change<?>, String> userTableColumn;
   public TableColumn<Change<?>, String> typeTableColumn;
   public ComboBox<String> entityFilterCombobox;
   public DatePicker filterDatePicker;
   public ComboBox<String> userFilterComboBox;
   public String allFilter = "Svi";
-
   public ChangeReaderThread changeReaderThread = new ChangeReaderThread();
 
   void setFiltersFromChanges(ArrayList<Change<Entity>> changes) {
@@ -85,7 +85,6 @@ public class History implements CleanableScene {
   }
 
   void search() {
-
   }
 
   public void initialize() {
@@ -93,7 +92,7 @@ public class History implements CleanableScene {
     entityNameTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getActualEntity().getEntityName()));
     userTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getUsername() + " (" + cellData.getValue().getUser().getUserType().getName() + ")"));
     typeTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getChangeType()));
-    idTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getActualEntity().getId().toString()));
+    idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getActualEntity().getId()).asObject());
 
     changeReaderThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
       Platform.runLater(() -> {
@@ -125,6 +124,6 @@ public class History implements CleanableScene {
 
   @Override
   public void cleanup() {
-    changeReaderThread.interrupt();
+    changeReaderThread.end();
   }
 }

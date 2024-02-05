@@ -36,7 +36,10 @@ public class Navigator {
 
   static public Parent loadParent(String resourcePath) {
     try {
-      return load(resourcePath).load();
+      FXMLLoader l = load(resourcePath);
+      Parent parent = l.load();
+      controller = l.getController();
+      return parent;
     } catch (IOException e) {
       logger.error("Error loading resource: " + resourcePath);
       return null;
@@ -51,7 +54,7 @@ public class Navigator {
 
   static public void navigate(String resourcePath, String title) {
     cleanUpLastScene();
-    var window = loadParent(resourcePath);
+    Parent window = loadParent(resourcePath);
     Scene scene = new Scene(window);
     applyStyles(scene);
 

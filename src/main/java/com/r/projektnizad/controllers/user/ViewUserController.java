@@ -2,6 +2,7 @@ package com.r.projektnizad.controllers.user;
 
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.User;
+import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.util.AppDialog;
 import com.r.projektnizad.util.CustomButtonTypes;
 import com.r.projektnizad.util.CustomTableView;
@@ -10,7 +11,6 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class View {
+public class ViewUserController {
   public CustomTableView<User> userTableView;
   public TableColumn<User, Long> idTableColumn;
   public TableColumn<User, String> nameTableColumn;
@@ -40,8 +40,8 @@ public class View {
     Map<String, Consumer<User>> actions = new LinkedHashMap<>();
 
     actions.put("Izmijeni", user -> {
-      new AddDialog(Optional.of(user)).showAndWait().ifPresent(u -> {
-
+      new ModifyUserDialog(Optional.of(user)).showAndWait().ifPresent(u -> {
+        updateUserTable();
       });
     });
     actions.put("Obriši", user -> {
@@ -65,6 +65,6 @@ public class View {
   }
 
   public void openAddUser(ActionEvent actionEvent) {
-    new AddDialog(Optional.empty()).showAndWait().ifPresent(user -> updateUserTable());
+    new ModifyUserDialog(Optional.empty()).showAndWait().ifPresent(user -> updateUserTable());
   }
 }

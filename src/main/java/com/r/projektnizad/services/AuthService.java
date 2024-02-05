@@ -1,7 +1,14 @@
 package com.r.projektnizad.services;
 
 import com.r.projektnizad.enums.UserType;
+import com.r.projektnizad.exceptions.InvalidPasswordException;
+import com.r.projektnizad.exceptions.UserNotFoundException;
+import com.r.projektnizad.exceptions.UsersNotLoadedError;
 import com.r.projektnizad.models.User;
+import com.r.projektnizad.models.change.AddChange;
+import com.r.projektnizad.models.change.DeleteChange;
+import com.r.projektnizad.models.change.ModifyChange;
+import com.r.projektnizad.threads.ChangeWriterThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +48,7 @@ public class AuthService {
     try {
       loadUsers();
     } catch (IOException e) {
-      logger.error("[EXIT] Error while loading user: " + e.getMessage(), e);
-      System.exit(1);
+      throw new UsersNotLoadedError("Error while loading users: " + e.getMessage(), e);
     }
 
     // add default admin user
@@ -67,26 +73,30 @@ public class AuthService {
     return users.stream().map(User::getId).max(Long::compareTo).orElse(0L) + 1;
   }
 
-  public Optional<User> register(String username, String password, UserType userType) {
+  public void register(String username, String password, UserType userType) {
     Optional<User> user = User.hashPassword(password).map(userPassword -> new User(nextUserId(), username, userPassword, userType));
     user.ifPresent(users::add);
+    user.ifPresent(u -> new ChangeWriterThread<>(new AddChange<>(u.clone())).start());
+    logger.info("User registered: " + password + " " + user.get().getPassword().toString());
     try {
       saveUsers();
     } catch (IOException e) {
       logger.error("Error while saving user: " + e.getMessage());
     }
-    return user;
   }
 
-  public boolean authenticate(String username, String password) {
+  public boolean authenticate(String username, String password) throws InvalidPasswordException, UserNotFoundException {
     Optional<User> user = users.stream().filter(u -> u.getUsername().equals(username)).findFirst();
     if (user.isPresent()) {
       if (User.verifyPassword(password, user.get().getPassword())) {
         currentUser = user;
-        return true;
+        return currentUser.isPresent();
+      } else {
+        throw new InvalidPasswordException("Pogrešna lozinka");
       }
+    } else {
+      throw new UserNotFoundException("Korisnik nije pronađen");
     }
-    return currentUser.isPresent();
   }
 
   public void logout() {
@@ -123,6 +133,7 @@ public class AuthService {
 
   public void deleteUser(User user) {
     users.remove(user);
+    new ChangeWriterThread<>(new DeleteChange<>(user)).start();
     try {
       saveUsers();
     } catch (IOException e) {
@@ -146,8 +157,11 @@ public class AuthService {
   }
 
   public void editUser(User user) {
+    Optional<User> oldUser = users.stream().filter(u -> u.getId().equals(user.getId())).findFirst();
+    oldUser.ifPresent(value -> new ChangeWriterThread<>(new ModifyChange<>(value.clone(), user.clone())).start());
     users.removeIf(u -> u.getId().equals(user.getId()));
     users.add(user);
+
     try {
       saveUsers();
     } catch (IOException e) {
