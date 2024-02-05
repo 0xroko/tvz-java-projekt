@@ -2,7 +2,9 @@ package com.r.projektnizad.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Filter {
 
@@ -33,6 +35,32 @@ public class Filter {
 
   }
 
+  private static boolean handleOrAnd(Map.Entry<String, FilterItem> entry, StringBuilder sb, Function<String, String> function) {
+    // if contains | then we have multiple columns to search
+    if (entry.getKey().contains("|")) {
+      String[] columns = entry.getKey().split("\\|");
+      sb.append("(");
+      for (String column : columns) {
+        sb.append(function.apply(column));
+        sb.append(" OR ");
+      }
+      sb.delete(sb.length() - 4, sb.length());
+      sb.append(") AND ");
+      return true;
+    } else if (entry.getKey().contains("&")) {
+      String[] columns = entry.getKey().split("&");
+      sb.append("(");
+      for (String column : columns) {
+        sb.append(function.apply(column));
+        sb.append(" AND ");
+      }
+      sb.delete(sb.length() - 5, sb.length());
+      sb.append(") AND ");
+      return true;
+    }
+    return false;
+  }
+
   public static String build(String baseQuery, Map<String, FilterItem> items) {
     StringBuilder sb = new StringBuilder(baseQuery);
     if (!items.isEmpty()) {
@@ -42,17 +70,25 @@ public class Filter {
     }
     for (Map.Entry<String, FilterItem> entry : items.entrySet()) {
       if (entry.getValue().type == FilterType.LIKE) {
-        sb.append(entry.getKey());
-        sb.append(" LIKE ");
-        sb.append("'%");
-        sb.append(entry.getValue().getValue());
-        sb.append("%'");
+        if (handleOrAnd(entry, sb, column -> column + " LIKE '%" + entry.getValue().getValue() + "%'")) {
+          continue;
+        } else {
+          sb.append(entry.getKey());
+          sb.append(" LIKE ");
+          sb.append("'%");
+          sb.append(entry.getValue().getValue());
+          sb.append("%'");
+        }
       } else if (entry.getValue().type == FilterType.EQUAL) {
-        sb.append(entry.getKey());
-        sb.append(" = ");
-        sb.append("'");
-        sb.append(entry.getValue().getValue());
-        sb.append("'");
+        if (handleOrAnd(entry, sb, column -> column + " = '" + entry.getValue().getValue() + "'")) {
+          continue;
+        } else {
+          sb.append(entry.getKey());
+          sb.append(" = ");
+          sb.append("'");
+          sb.append(entry.getValue().getValue());
+          sb.append("'");
+        }
       } else if (entry.getValue().type == FilterType.DATE) {
         // TS >= DATE('2009-10-01') AND TS < (DATE('2009-10-01') + INTERVAL 1 DAY)
         sb.append(entry.getKey());
