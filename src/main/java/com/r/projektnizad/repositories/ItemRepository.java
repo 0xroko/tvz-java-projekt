@@ -2,6 +2,7 @@ package com.r.projektnizad.repositories;
 
 import com.r.projektnizad.db.Database;
 import com.r.projektnizad.enums.ItemType;
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.models.Category;
 import com.r.projektnizad.models.Dao;
 import com.r.projektnizad.models.Item;
@@ -27,7 +28,7 @@ public class ItemRepository implements Dao<Item> {
   }
 
   @Override
-  public List<Item> getAll() {
+  public List<Item> getAll() throws DatabaseActionFailException {
     ArrayList<Item> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM item JOIN category c on c.id = item.category_id");
@@ -37,12 +38,13 @@ public class ItemRepository implements Dao<Item> {
       }
     } catch (SQLException e) {
       logger.error("Error while fetching items", e);
+      throw new DatabaseActionFailException("Greška prilikom dohvata artikala", e);
     }
     return items;
   }
 
   @Override
-  public void save(Item item) {
+  public void save(Item item) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       var stmt = conn.prepareStatement("INSERT INTO item (name, description, price, category_id, stock, default_stock_increment, preparation_time, item_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
       setItem(item, stmt);
@@ -53,6 +55,7 @@ public class ItemRepository implements Dao<Item> {
       }
     } catch (SQLException e) {
       logger.error("Error while saving item", e);
+      throw new DatabaseActionFailException("Greška prilikom spremanja artikla", e);
     }
 
   }
@@ -74,7 +77,7 @@ public class ItemRepository implements Dao<Item> {
   }
 
   @Override
-  public void update(Long id, Item item) {
+  public void update(Long id, Item item) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       var stmt = conn.prepareStatement("UPDATE item SET name = ?, description = ?, price = ?, category_id = ?, stock = ?, default_stock_increment = ?, preparation_time = ?, item_type = ? WHERE id = ?");
       setItem(item, stmt);
@@ -82,6 +85,7 @@ public class ItemRepository implements Dao<Item> {
       stmt.executeUpdate();
     } catch (SQLException e) {
       logger.error("Error while updating item", e);
+      throw new DatabaseActionFailException("Greška prilikom ažuriranja artikla", e);
     }
 
   }
@@ -98,23 +102,23 @@ public class ItemRepository implements Dao<Item> {
   }
 
   @Override
-  public void delete(Long id) {
+  public void delete(Long id) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       var stmt = conn.prepareStatement("DELETE FROM item WHERE id = ?");
       stmt.setLong(1, id);
       stmt.executeUpdate();
     } catch (SQLException e) {
       logger.error("Error while deleting item", e);
+      throw new DatabaseActionFailException("Greška prilikom brisanja artikla", e);
     }
   }
 
   @Override
-  public List<Item> filter(Map<String, Filter.FilterItem> filters) {
+  public List<Item> filter(Map<String, Filter.FilterItem> filters) throws DatabaseActionFailException {
     ArrayList<Item> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       String query = "SELECT * FROM item JOIN category c on c.id = item.category_id";
       String filterQuery = Filter.build(query, filters);
-      logger.info(filterQuery);
       ResultSet rs = conn.createStatement().executeQuery(filterQuery);
       while (rs.next()) {
         var item = mapToItem(rs);
@@ -122,6 +126,7 @@ public class ItemRepository implements Dao<Item> {
       }
     } catch (SQLException e) {
       logger.error("Error while fetching items", e);
+      throw new DatabaseActionFailException("Greška prilikom dohvata artikala", e);
     }
 
     return items;

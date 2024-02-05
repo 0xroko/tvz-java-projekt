@@ -9,6 +9,7 @@ package com.r.projektnizad.repositories;
 import com.r.projektnizad.db.Database;
 import com.r.projektnizad.enums.ItemOnOrderStatus;
 import com.r.projektnizad.enums.OrderStatus;
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.models.*;
 import com.r.projektnizad.util.Filter;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class OrderRepository implements Dao<Order> {
     return Optional.empty();
   }
 
-  public List<ItemOnOrder> getItemsOnOrder(long orderId) {
+  public List<ItemOnOrder> getItemsOnOrder(long orderId) throws DatabaseActionFailException {
     ArrayList<ItemOnOrder> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       Statement stmt = conn.createStatement();
@@ -45,21 +46,24 @@ public class OrderRepository implements Dao<Order> {
       }
     } catch (SQLException e) {
       logger.error("Error getting items on order", e);
+      throw new DatabaseActionFailException("Greška prilikom dohvata stavki narudžbe.");
     }
     return items;
   }
 
-  public void deleteItemOnOrder(long id) {
+  public void deleteItemOnOrder(long id, Order o) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       PreparedStatement stmt = conn.prepareStatement("DELETE FROM item_on_order WHERE id = ?");
       stmt.setLong(1, id);
       stmt.executeUpdate();
+      o.getItemsOnOrder().removeIf(itemOnOrder -> itemOnOrder.getId() == id);
     } catch (SQLException e) {
       logger.error("Error while deleting item on order", e);
+      throw new DatabaseActionFailException("Greška prilikom brisanja stavke narudžbe.");
     }
   }
 
-  public void updateItemOnOrder(long id, ItemOnOrder itemOnOrder) {
+  public void updateItemOnOrder(long id, ItemOnOrder itemOnOrder) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       PreparedStatement stmt = conn.prepareStatement("UPDATE item_on_order SET item_id = ?, start_time = ?, status = ? WHERE id = ?");
       stmt.setLong(1, itemOnOrder.getItem().getId());
@@ -69,10 +73,11 @@ public class OrderRepository implements Dao<Order> {
       stmt.executeUpdate();
     } catch (SQLException e) {
       logger.error("Error while updating item on order", e);
+      throw new DatabaseActionFailException("Greška prilikom ažuriranja stavke narudžbe.");
     }
   }
 
-  public void saveItemOnOrder(Order o, ItemOnOrder itemOnOrder) {
+  public void saveItemOnOrder(Order o, ItemOnOrder itemOnOrder) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       PreparedStatement stmt = conn.prepareStatement("INSERT INTO item_on_order (item_id, start_time, status, order_id) VALUES (?, ?, ?, ?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
       stmt.setLong(1, itemOnOrder.getItem().getId());
@@ -87,6 +92,7 @@ public class OrderRepository implements Dao<Order> {
       o.getItemsOnOrder().add(itemOnOrder);
     } catch (SQLException e) {
       logger.error("Error while saving item on order", e);
+      throw new DatabaseActionFailException("Greška prilikom dodavanja stavke narudžbe.");
     }
   }
 
@@ -106,7 +112,7 @@ public class OrderRepository implements Dao<Order> {
   }
 
   @Override
-  public List<Order> getAll() {
+  public List<Order> getAll() throws DatabaseActionFailException {
     ArrayList<Order> orders = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       Statement stmt = conn.createStatement();
@@ -116,6 +122,7 @@ public class OrderRepository implements Dao<Order> {
       }
     } catch (SQLException e) {
       logger.error("Error getting all orders", e);
+      throw new DatabaseActionFailException("Greška prilikom dohvata narudžbi.");
     }
     return orders;
   }
@@ -144,7 +151,7 @@ public class OrderRepository implements Dao<Order> {
   }
 
   @Override
-  public void save(Order order) {
+  public void save(Order order) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       var stmt = conn.prepareStatement("INSERT INTO `order` (table_id, status, user_id, order_time, note) VALUES (?, ?, ?, ?, ?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
       setOrder(order, stmt);
@@ -155,11 +162,12 @@ public class OrderRepository implements Dao<Order> {
       }
     } catch (SQLException e) {
       logger.error("Error while saving order", e);
+      throw new DatabaseActionFailException("Greška prilikom dodavanja narudžbe.");
     }
   }
 
   @Override
-  public void update(Long id, Order order) {
+  public void update(Long id, Order order) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       var stmt = conn.prepareStatement("UPDATE `order` SET table_id = ?, status = ?, user_id = ?, order_time = ?, note = ? WHERE id = ?");
       setOrder(order, stmt);
@@ -167,6 +175,7 @@ public class OrderRepository implements Dao<Order> {
       stmt.executeUpdate();
     } catch (SQLException e) {
       logger.error("Error while updating order", e);
+      throw new DatabaseActionFailException("Greška prilikom ažuriranja narudžbe.");
     }
   }
 
@@ -179,18 +188,19 @@ public class OrderRepository implements Dao<Order> {
   }
 
   @Override
-  public void delete(Long id) {
+  public void delete(Long id) throws DatabaseActionFailException {
     try (Connection conn = Database.connect()) {
       var stmt = conn.prepareStatement("DELETE FROM `order` WHERE id = ?");
       stmt.setLong(1, id);
       stmt.executeUpdate();
     } catch (SQLException e) {
       logger.error("Error while deleting order", e);
+      throw new DatabaseActionFailException("Greška prilikom brisanja narudžbe.");
     }
   }
 
   @Override
-  public List<Order> filter(Map<String, Filter.FilterItem> filters) {
+  public List<Order> filter(Map<String, Filter.FilterItem> filters) throws DatabaseActionFailException {
     ArrayList<Order> orders = new ArrayList<>();
     try (Connection conn = Database.connect()) {
       Statement stmt = conn.createStatement();
@@ -203,7 +213,6 @@ public class OrderRepository implements Dao<Order> {
               """;
       query = Filter.build(query, filters);
       query += " GROUP BY `order`.id";
-      logger.info(query);
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
         orders.add(mapToOrder(rs));
@@ -211,7 +220,7 @@ public class OrderRepository implements Dao<Order> {
       return orders;
     } catch (SQLException e) {
       logger.error("Error filtering orders", e);
+      throw new DatabaseActionFailException("Greška prilikom filtriranja narudžbi.");
     }
-    return orders;
   }
 }

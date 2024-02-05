@@ -2,6 +2,7 @@ package com.r.projektnizad.controllers.item;
 
 import atlantafx.base.controls.MaskTextField;
 import atlantafx.base.theme.Styles;
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.repositories.CategoryRepository;
 import com.r.projektnizad.enums.ItemType;
 import com.r.projektnizad.models.Category;
@@ -14,9 +15,11 @@ import javafx.scene.layout.VBox;
 import net.synedra.validatorfx.Validator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class AddDialog extends Dialog<Item> {
+public class ModifyItemDialog extends Dialog<Item> {
   @FXML
   TextField nameTextField;
   @FXML
@@ -43,11 +46,15 @@ public class AddDialog extends Dialog<Item> {
     preparationTimeTextField.setMask("99:99");
 
     itemTypeComboBox.getItems().addAll(ItemType.values());
+    Util.comboBoxCellFactorySetter(itemTypeComboBox, ItemType::getName);
 
-    itemTypeComboBox.setCellFactory(param -> Util.getComboBoxListCell(ItemType::getName));
-    itemTypeComboBox.setButtonCell(Util.getComboBoxListCell(ItemType::getName));
+    try {
+      List<Category> categories = categoryRepository.getAll();
+      categoryComboBox.getItems().addAll(categories);
 
-    categoryComboBox.getItems().addAll(categoryRepository.getAll());
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
 
     categoryComboBox.setCellFactory(param -> Util.getComboBoxListCell(Category::getName));
     categoryComboBox.setButtonCell(Util.getComboBoxListCell(Category::getName));
@@ -55,7 +62,6 @@ public class AddDialog extends Dialog<Item> {
     Validators.buildTextFieldValidator(priceTextField, Validators.number(5, 2));
     Validators.buildTextFieldValidator(defaultStockIncrementTextField, Validators.number(3, 0));
     Validators.buildTextFieldValidator(stockTextField, Validators.number(2, 2));
-
 
     // only allow preparation time to be visible if the item is a PREPARABLE
     itemTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -127,13 +133,11 @@ public class AddDialog extends Dialog<Item> {
               defaultStockIncrementTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
             })
             .decorates(defaultStockIncrementTextField).immediate();
-
   }
-
 
   private final Validator validator = new Validator();
 
-  public AddDialog(Optional<Item> editItem) {
+  public ModifyItemDialog(Optional<Item> editItem) {
     Navigator.asDialog("item/add.fxml", this);
 
     boolean isEdit = editItem.isPresent();

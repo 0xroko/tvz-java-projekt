@@ -7,27 +7,27 @@
 package com.r.projektnizad.controllers.order;
 
 import com.r.projektnizad.enums.ItemOnOrderStatus;
+import com.r.projektnizad.enums.OrderStatus;
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.models.CleanableScene;
 import com.r.projektnizad.models.ItemOnOrder;
-import com.r.projektnizad.models.ObservableThreadTask;
 import com.r.projektnizad.models.Order;
 import com.r.projektnizad.models.change.ModifyChange;
 import com.r.projektnizad.repositories.OrderRepository;
 import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.threads.SignaledTaskThread;
 import com.r.projektnizad.util.*;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-import java.lang.constant.Constable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class OrderItems extends Dialog<Boolean> implements CleanableScene {
+public final class ViewOrderItemsDialog extends Dialog<Boolean> implements CleanableScene {
   @FXML
   Button addItemToOrderButton;
   @FXML
@@ -43,7 +43,7 @@ public class OrderItems extends Dialog<Boolean> implements CleanableScene {
 
   Order order;
   OrderRepository orderRepository = new OrderRepository();
-  SignaledTaskThread<List<ItemOnOrder>, Void> signaledTaskThread;
+  SignaledTaskThread<List<ItemOnOrder>, Void> orderTaskThread;
 
   @FXML
   void initialize() {
@@ -77,23 +77,20 @@ public class OrderItems extends Dialog<Boolean> implements CleanableScene {
     getDialogPane().getButtonTypes().addAll(CustomButtonTypes.OK);
   }
 
-  public OrderItems(Order order) {
+  public ViewOrderItemsDialog(Order order) {
     this.order = order;
     Navigator.asDialog("order/items.fxml", this);
-    signaledTaskThread = new SignaledTaskThread<>(p -> orderRepository.getItemsOnOrder(order.getId()));
-    signaledTaskThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
+    orderTaskThread = new SignaledTaskThread<>(Util.wrapCheckedFunction(p -> orderRepository.getItemsOnOrder(order.getId())));
+    orderTaskThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
       itemOnOrderTableView.setItems(newValue);
+      order.setItemsOnOrder((ArrayList<ItemOnOrder>) newValue);
       itemOnOrderTableView.autoResizeColumns();
     });
 
-    setResultConverter(buttonType -> {
-      if (buttonType == CustomButtonTypes.OK) {
-        return true;
-      }
-      return true;
-    });
+    setResultConverter(buttonType -> true);
 
-    signaledTaskThread.signal();
+    addItemToOrderButton.setDisable(order.getStatus() != OrderStatus.IN_PROGRESS);
+    orderTaskThread.signal();
   }
 
   private void deleteItem(ItemOnOrder itemOnOrder) {
@@ -101,32 +98,60 @@ public class OrderItems extends Dialog<Boolean> implements CleanableScene {
     if (result != CustomButtonTypes.DELETE) {
       return;
     }
-    orderRepository.deleteItemOnOrder(itemOnOrder.getId());
-    signaledTaskThread.signal();
+    try {
+      Order old = order.clone();
+      orderRepository.deleteItemOnOrder(itemOnOrder.getId(), order);
+      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+      orderTaskThread.signal();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
   }
 
   private void addItemToOrder() {
-    new AddItemDialog().showAndWait().ifPresent(itemOnOrder -> {
-      Order old = order.clone();
-      itemOnOrder.forEach(t -> orderRepository.saveItemOnOrder(order, t));
-      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
-      signaledTaskThread.signal();
+    new ModifyOrderItemsDialog().showAndWait().ifPresent(itemOnOrder -> {
+      itemOnOrder.forEach(t -> {
+        try {
+          Order old = order.clone();
+          orderRepository.saveItemOnOrder(order, t);
+          new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+          orderTaskThread.signal();
+        } catch (DatabaseActionFailException e) {
+          new AppDialog().showExceptionMessage(e);
+        }
+      });
     });
   }
 
-
   private void changeStatus(ItemOnOrder itemOnOrder) {
+    Order old = order.clone();
     // set status to done
     itemOnOrder.setStatus(ItemOnOrderStatus.DONE);
-    orderRepository.updateItemOnOrder(itemOnOrder.getId(), itemOnOrder);
-    signaledTaskThread.signal();
+    try {
+      orderRepository.updateItemOnOrder(itemOnOrder.getId(), itemOnOrder);
+      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+      orderTaskThread.signal();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
   }
 
   private void addAgain(ItemOnOrder itemOnOrder) {
+    ItemOnOrder newItemOnOrder = itemOnOrder.clone();
+    Order old = order.clone();
+    //newItemOnOrder.setStatus(ItemOnOrderStatus.PREPARING);
+    newItemOnOrder.setId(null);
+    try {
+      orderRepository.saveItemOnOrder(order, itemOnOrder);
+      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+      orderTaskThread.signal();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
   }
 
   @Override
   public void cleanup() {
-    signaledTaskThread.interrupt();
+    orderTaskThread.interrupt();
   }
 }

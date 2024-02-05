@@ -11,12 +11,12 @@ import javafx.scene.control.TextField;
 
 import java.util.Optional;
 
-public class AddDialog extends Dialog<Category> {
+public class ModifyCategoryDialog extends Dialog<Category> {
   public TextField descriptionInput;
   public TextField nameInput;
   public Label titleLabel;
 
-  public AddDialog(Optional<Category> editCategory) {
+  public ModifyCategoryDialog(Optional<Category> editCategory) {
     Navigator.asDialog("category/add.fxml", this);
 
     boolean isEdit = editCategory.isPresent();

@@ -1,5 +1,6 @@
 package com.r.projektnizad.controllers.item;
 
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.repositories.CategoryRepository;
 import com.r.projektnizad.repositories.ItemRepository;
 import com.r.projektnizad.models.Category;
@@ -22,7 +23,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class View implements CleanableScene {
+public final class ViewItemController implements CleanableScene {
   public CustomTableView<Item> itemTableView;
   public TableColumn<Item, Long> idTableColumn;
   public TableColumn<Item, String> nameTableColumn;
@@ -36,20 +37,20 @@ public class View implements CleanableScene {
 
   private final Map<String, Filter.FilterItem> filterMap = new HashMap<>();
   private final ItemRepository itemRepository = new ItemRepository();
-  private final SignaledTaskThread<List<Item>, Map<String, Filter.FilterItem>> signaledTaskThread = new SignaledTaskThread<>(itemRepository::filter);
+  private final CategoryRepository categoryRepository = new CategoryRepository();
+  private final SignaledTaskThread<List<Item>, Map<String, Filter.FilterItem>> itemsTaskThread = new SignaledTaskThread<>(Util.wrapCheckedFunction(itemRepository::filter));
 
   void refresh() {
-    signaledTaskThread.signal(filterMap);
+    itemsTaskThread.signal(filterMap);
   }
 
   public void initialize() {
-
     // bind search text field to filter map
     nameSearchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.isEmpty()) {
-        filterMap.remove("item.name");
+        filterMap.remove("item.name|item.description");
       } else {
-        filterMap.put("item.name", new Filter.FilterItem(newValue, Filter.FilterType.LIKE));
+        filterMap.put("item.name|item.description", new Filter.FilterItem(newValue, Filter.FilterType.LIKE));
       }
       refresh();
     });
@@ -63,7 +64,13 @@ public class View implements CleanableScene {
       refresh();
     });
 
-    categorySearchComboBox.setItems(FXCollections.observableArrayList(new CategoryRepository().getAll()));
+
+    try {
+      categorySearchComboBox.getItems().addAll(categoryRepository.getAll());
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
+
     categorySearchComboBox.getItems().addFirst(new Category(-1L, "Sve", "Sve kategorije"));
     Util.comboBoxCellFactorySetter(categorySearchComboBox, Category::getName);
 
@@ -81,7 +88,7 @@ public class View implements CleanableScene {
       return new SimpleStringProperty(Util.formatDuration(cellData.getValue().getPreparationTime()));
     });
 
-    signaledTaskThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
+    itemsTaskThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
       itemTableView.setItems(newValue);
       itemTableView.autoResizeColumns();
     });
@@ -101,44 +108,58 @@ public class View implements CleanableScene {
   }
 
   private void edit(Item item) {
-    new AddDialog(Optional.of(item)).showAndWait().ifPresent(editedItem -> {
-      itemRepository.update(editedItem.getId(), editedItem);
-      new ChangeWriterThread<>(new ModifyChange<>(item, editedItem)).start();
-      refresh();
+    new ModifyItemDialog(Optional.of(item)).showAndWait().ifPresent(editedItem -> {
+      try {
+        itemRepository.update(editedItem.getId(), editedItem);
+        new ChangeWriterThread<>(new ModifyChange<>(item, editedItem)).start();
+        refresh();
+      } catch (DatabaseActionFailException e) {
+        new AppDialog().showExceptionMessage(e);
+      }
     });
   }
 
   private void stockReplenish(Item item) {
     Item oldItem = item.clone();
     item.setStock(item.getDefaultStockIncrement() + item.getStock());
-    itemRepository.update(item.getId(), item);
-    new ChangeWriterThread<>(new ModifyChange<>(oldItem, item)).start();
-    refresh();
+    try {
+      itemRepository.update(item.getId(), item);
+      new ChangeWriterThread<>(new ModifyChange<>(oldItem, item)).start();
+      refresh();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
+
   }
 
   private void delete(Item item) {
-    ButtonType confirm = new AppDialog().showConfirmationMessage("Obriši artikl", "Da li ste sigurni da želite obrisati artikl?", CustomButtonTypes.DELETE);
+    ButtonType confirm = new AppDialog().showConfirmationMessage("Obriši artikl", "Jeste li ste sigurni da želite obrisati artikl?", CustomButtonTypes.DELETE);
     if (confirm != CustomButtonTypes.DELETE) {
       return;
     }
-    itemRepository.delete(item.getId());
-    new ChangeWriterThread<>(new DeleteChange<>(item)).start();
-    refresh();
+    try {
+      itemRepository.delete(item.getId());
+      new ChangeWriterThread<>(new DeleteChange<>(item)).start();
+      refresh();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
   }
 
   public void openAddItem() {
-    new AddDialog(Optional.empty()).showAndWait().ifPresent(item -> {
-      itemRepository.save(item);
-      new ChangeWriterThread<>(new AddChange<>(item)).start();
-      refresh();
+    new ModifyItemDialog(Optional.empty()).showAndWait().ifPresent(item -> {
+      try {
+        itemRepository.save(item);
+        new ChangeWriterThread<>(new AddChange<>(item)).start();
+        refresh();
+      } catch (DatabaseActionFailException e) {
+        new AppDialog().showExceptionMessage(e);
+      }
     });
   }
 
   @Override
   public void cleanup() {
-    signaledTaskThread.interrupt();
-  }
-
-  public void search(KeyEvent keyEvent) {
+    itemsTaskThread.interrupt();
   }
 }

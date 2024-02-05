@@ -8,6 +8,7 @@ package com.r.projektnizad.controllers.order;
 
 import atlantafx.base.theme.Styles;
 import com.r.projektnizad.enums.ItemOnOrderStatus;
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.models.Item;
 import com.r.projektnizad.models.ItemOnOrder;
 import com.r.projektnizad.repositories.ItemRepository;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AddItemDialog extends Dialog<List<ItemOnOrder>> {
+public class ModifyOrderItemsDialog extends Dialog<List<ItemOnOrder>> {
   @FXML
   private Spinner<Integer> stockSpinner;
   @FXML
@@ -43,11 +44,15 @@ public class AddItemDialog extends Dialog<List<ItemOnOrder>> {
 
   @FXML
   void initialize() {
-    ItemRepository itemRepository = new ItemRepository();
-    List<Item> items = itemRepository.getAll();
-
-    itemComboBox.setItems(FXCollections.observableArrayList(items));
-    itemComboBox.getSelectionModel().selectFirst();
+    try {
+      ItemRepository itemRepository = new ItemRepository();
+      List<Item> items = itemRepository.getAll();
+      itemComboBox.getItems().addAll(items);
+      itemComboBox.getSelectionModel().selectFirst();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+      setResult(null);
+    }
 
     itemComboBox.setConverter(new StringConverter<>() {
       @Override
@@ -110,7 +115,7 @@ public class AddItemDialog extends Dialog<List<ItemOnOrder>> {
 
   }
 
-  public AddItemDialog() {
+  public ModifyOrderItemsDialog() {
     Navigator.asDialog("order/add-item.fxml", this);
 
     setResultConverter(buttonType -> {

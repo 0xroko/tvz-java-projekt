@@ -6,6 +6,8 @@
 
 package com.r.projektnizad.controllers.order;
 
+import com.r.projektnizad.enums.UserType;
+import com.r.projektnizad.exceptions.DatabaseActionFailException;
 import com.r.projektnizad.models.change.AddChange;
 import com.r.projektnizad.models.change.DeleteChange;
 import com.r.projektnizad.models.change.ModifyChange;
@@ -29,7 +31,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class View implements CleanableScene {
+public final class ViewOrderCategory implements CleanableScene {
   public DatePicker orderDateDatePicker;
   public CustomTableView<Order> orderTableView;
   public ComboBox<OrderStatus> orderStatusComboBox;
@@ -43,7 +45,7 @@ public class View implements CleanableScene {
   public TableColumn<Order, String> noteTableColumn;
   public TableColumn<Order, String> itemsTableColumn;
   private final OrderRepository orderRepository = new OrderRepository();
-  private final SignaledTaskThread<List<Order>, Map<String, Filter.FilterItem>> signaledTaskThread = new SignaledTaskThread<>(orderRepository::filter);
+  private final SignaledTaskThread<List<Order>, Map<String, Filter.FilterItem>> signaledTaskThread = new SignaledTaskThread<>(Util.wrapCheckedFunction(orderRepository::filter));
   private final Map<String, Filter.FilterItem> filters = new HashMap<>();
   static private final String startButton = "Započni";
   static private final String doneButton = "Završi";
@@ -51,10 +53,7 @@ public class View implements CleanableScene {
   static private final String deleteButton = "Obriši";
   static private final String viewButton = "Pregledaj";
 
-
   public void initialize() {
-    Navigator.setController(this);
-
     orderStatusComboBox.setItems(FXCollections.observableArrayList(OrderStatus.values()));
     orderStatusComboBox.getSelectionModel().selectFirst();
     Util.comboBoxCellFactorySetter(orderStatusComboBox, OrderStatus::getName);
@@ -64,6 +63,11 @@ public class View implements CleanableScene {
     orderDateDatePicker.getEditor().setOpacity(1);
     // bug where setting the value of the date picker doesn't trigger the listener
     filters.put("order_time", new Filter.FilterItem(Filter.formatLocalDateTime(orderDateDatePicker.getValue().atStartOfDay()), Filter.FilterType.DATE));
+
+    // only display current user's orders if not admin
+    if (!Main.authService.getCurrentUser().get().getUserType().equals(UserType.ADMIN)) {
+      filters.put("order.user_id", new Filter.FilterItem(Main.authService.getCurrentUser().get().getId().toString(), Filter.FilterType.EQUAL));
+    }
 
     idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getId()).asObject());
     dateTableColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOrderTime()));
@@ -139,55 +143,75 @@ public class View implements CleanableScene {
       orderTableView.autoResizeColumns();
     });
 
-
     signaledTaskThread.signal(filters);
   }
 
   private void openOrderView(Order order) {
-    new OrderItems(order).showAndWait().ifPresent(t -> {
-              signaledTaskThread.signal();
-            }
+    new ViewOrderItemsDialog(order).showAndWait().ifPresent(t -> signaledTaskThread.signal()
     );
   }
 
   private void openOrderEdit(Order order) {
-    new AddDialog(Optional.of(order)).showAndWait().ifPresent(order1 -> {
-      orderRepository.update(order1.getId(), order1);
-      new ChangeWriterThread<>(new ModifyChange<>(order, order1)).start();
-      signaledTaskThread.signal();
+    new ModifyOrderDialog(Optional.of(order)).showAndWait().ifPresent(order1 -> {
+      try {
+        orderRepository.update(order1.getId(), order1);
+        new ChangeWriterThread<>(new ModifyChange<>(order, order1)).start();
+        signaledTaskThread.signal();
+      } catch (DatabaseActionFailException e) {
+        new AppDialog().showExceptionMessage(e);
+      }
+
     });
   }
 
   private void deleteOrder(Order order) {
     ButtonType result = new AppDialog().showConfirmationMessage("Brisanje narudžbe", "Da li ste sigurni da želite obrisati narudžbu?", CustomButtonTypes.DELETE);
     if (result != CustomButtonTypes.DELETE) return;
-    orderRepository.delete(order.getId());
-    new ChangeWriterThread<>(new DeleteChange<>(order)).start();
-    signaledTaskThread.signal();
+    try {
+      orderRepository.delete(order.getId());
+      new ChangeWriterThread<>(new DeleteChange<>(order)).start();
+      signaledTaskThread.signal();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
+
   }
 
   public void openOrderAdd(ActionEvent actionEvent) {
-    new AddDialog(Optional.empty()).showAndWait().ifPresent(order -> {
-      orderRepository.save(order);
-      new ChangeWriterThread<>(new AddChange<>(order)).start();
-      signaledTaskThread.signal();
+    new ModifyOrderDialog(Optional.empty()).showAndWait().ifPresent(order -> {
+      try {
+        orderRepository.save(order);
+        new ChangeWriterThread<>(new AddChange<>(order)).start();
+        signaledTaskThread.signal();
+      } catch (DatabaseActionFailException e) {
+        new AppDialog().showExceptionMessage(e);
+      }
     });
   }
 
   public void setOrderInProgress(Order order) {
     Order old = order.clone();
     order.setStatus(OrderStatus.IN_PROGRESS);
-    orderRepository.update(order.getId(), order);
-    new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
-    signaledTaskThread.signal();
+    try {
+      orderRepository.update(order.getId(), order);
+      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+      signaledTaskThread.signal();
+    } catch (DatabaseActionFailException e) {
+      new AppDialog().showExceptionMessage(e);
+    }
+
   }
 
   public void setOrderDone(Order order) {
     Order old = order.clone();
     order.setStatus(OrderStatus.DONE);
-    orderRepository.update(order.getId(), order);
-    new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
-    signaledTaskThread.signal();
+    try {
+      orderRepository.update(order.getId(), order);
+      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+      signaledTaskThread.signal();
+    } catch (DatabaseActionFailException e) {
+      throw new RuntimeException(e);
+    }
   }
 
 
