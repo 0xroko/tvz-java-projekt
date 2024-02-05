@@ -43,7 +43,7 @@ public abstract class Change<T extends Entity> implements Serializable {
   }
 
   public Map<String, String> diff(boolean onlyName, String prefix) {
-    Map<String, String> diff = new HashMap<>();
+    Map<String, String> diff = new LinkedHashMap<>();
 
     if (oldEntity == null) {
       diff.put("id", "null -> " + newEntity.getId());
@@ -65,7 +65,6 @@ public abstract class Change<T extends Entity> implements Serializable {
 
         // is annotation present
         boolean hasCustomName = field.isAnnotationPresent(NamedHistoryMember.class);
-
         if (!hasCustomName) continue;
 
         String name = field.getAnnotation(NamedHistoryMember.class).value();
@@ -76,9 +75,21 @@ public abstract class Change<T extends Entity> implements Serializable {
           if (oldValue instanceof Entity) {
             if (newValue == null) continue;
             String entityName = ((Entity) oldValue).getEntityName();
-            diff.putAll(((Change<?>) new ModifyChange<>((Entity) oldValue, (Entity) newValue)).diff(true, prefix + entityName + " "));
+            diff.putAll(((Change<?>) new ModifyChange<>((Entity) oldValue, (Entity) newValue)).diff(true, prefix + entityName));
             continue;
           }
+          // if enum type, try calling getName method
+          if (oldValue instanceof Enum) {
+            try {
+              String oldValueName = (String) oldValue.getClass().getMethod("getName").invoke(oldValue);
+              String newValueName = (String) newValue.getClass().getMethod("getName").invoke(newValue);
+              diff.put(name, oldValueName + " -> " + newValueName);
+              continue;
+            } catch (Exception e) {
+              logger.error("Error while comparing enums", e);
+            }
+          }
+
           // if list, map or set, just show additions and removals
           if (oldValue instanceof List<?> && newValue instanceof List<?> && !oldValue.equals(newValue)) {
             try {
@@ -86,22 +97,24 @@ public abstract class Change<T extends Entity> implements Serializable {
               List<? extends Entity> oldList = (List<? extends Entity>) convertObjectToList(oldValue);
               @SuppressWarnings("unchecked")
               List<? extends Entity> newList = (List<? extends Entity>) convertObjectToList(newValue);
+              int cnt = 1;
               for (Entity e : oldList) {
-                if (!newList.contains(e)) {
+                boolean containsById = newList.stream().anyMatch(x -> x.getId().equals(e.getId()));
+                if (!containsById) {
                   // check if field is instance of ChangeAccessor and if it is, use it to get the name
                   if (e instanceof ChangeAccessor ch) {
                     String entityInListName = ch.access();
-                    diff.put(name, "Maknut -> " + entityInListName);
+                    diff.put(cnt++ + ". maknuto iz " + name.toLowerCase(), entityInListName);
                   }
                 }
               }
 
               for (Entity e : newList) {
-                if (!oldList.contains(e)) {
-                  // check if field is instance of ChangeAccessor and if it is, use it to get the name
+                boolean containsById = oldList.stream().anyMatch(x -> x.getId().equals(e.getId()));
+                if (!containsById) {
                   if (e instanceof ChangeAccessor ch) {
                     String entityInListName = ch.access();
-                    diff.put(name, "Dodan -> " + entityInListName);
+                    diff.put(cnt++ + ". dodano u " + name.toLowerCase(), entityInListName);
                   }
                 }
               }
