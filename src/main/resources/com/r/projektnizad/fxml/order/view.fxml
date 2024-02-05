@@ -15,7 +15,7 @@
 
 <?import javafx.scene.control.DatePicker?>
 <VBox prefHeight="890.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.r.projektnizad.controllers.order.View">
+      fx:controller="com.r.projektnizad.controllers.order.ViewOrderCategory">
     <fx:include source="../menubar.fxml"/>
     <GridPane>
         <columnConstraints>

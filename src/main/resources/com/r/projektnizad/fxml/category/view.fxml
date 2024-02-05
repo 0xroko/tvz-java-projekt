@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <VBox prefHeight="890.0" prefWidth="1280.0"
       xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.r.projektnizad.controllers.category.View">
+      fx:controller="com.r.projektnizad.controllers.category.ViewCategoryController">
     <fx:include source="../menubar.fxml"/>
     <GridPane>
         <columnConstraints>
@@ -24,14 +24,28 @@
         <VBox.margin>
             <Insets left="16.0" right="16.0" top="16.0"/>
         </VBox.margin>
-        <Label styleClass="title-2" text="Kategorije"/>
         <HBox spacing="16.0" GridPane.rowIndex="1">
             <padding>
                 <Insets bottom="16.0" top="16.0"/>
             </padding>
+            <Label styleClass="title-2" text="Kategorije"/>
             <Button onAction="#openAddCategory" text="Dodaj kategoriju"/>
         </HBox>
-        <CustomTableView GridPane.rowIndex="2" fx:id="categoryTableView" styleClass="dense">
+        <VBox GridPane.rowIndex="2">
+            <padding>
+                <Insets bottom="16.0"/>
+            </padding>
+            <HBox spacing="16.0">
+                <padding>
+                    <Insets bottom="16.0" top="16.0"/>
+                </padding>
+                <VBox>
+                    <Label text="Pretraga"/>
+                    <TextField fx:id="nameSearchTextField" prefWidth="200.0"/>
+                </VBox>
+            </HBox>
+        </VBox>
+        <CustomTableView GridPane.rowIndex="3" fx:id="categoryTableView" styleClass="dense">
             <columns>
                 <TableColumn fx:id="idTableColumn" prefWidth="75.0" text="ID"/>
                 <TableColumn fx:id="nameTableColumn" prefWidth="106.0" text="Ime"/>

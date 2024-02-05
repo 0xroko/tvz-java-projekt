@@ -7,31 +7,30 @@
 <HBox prefHeight="26.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.r.projektnizad.controllers.Menubar">
     <MenuBar fx:id="menubar">
-        <Menu text="Narudžbe">
+        <Menu text="Narudžbe/Rezervacije">
             <MenuItem onAction="#viewOrders" text="Pregled"/>
         </Menu>
-        <Menu text="Artikli">
+        <Menu text="Artikli" fx:id="itemMenu">
             <MenuItem onAction="#viewItems" text="Pregled"/>
             <SeparatorMenuItem/>
             <MenuItem onAction="#viewCategories" text="Kategorije"/>
         </Menu>
-        <Menu text="Rezervacije">
-            <MenuItem onAction="#viewReservations" text="Pretraga"/>
-            <MenuItem onAction="#addReservation" text="Dodaj"/>
+        <Menu text="Stolovi" fx:id="tableMenu">
+            <MenuItem onAction="#viewTables" text="Pregled"/>
         </Menu>
-        <Menu text="Povijest promjena">
+        <Menu text="Povijest promjena" fx:id="changesMenu">
             <MenuItem onAction="#viewHistoryChanges" text="Pregled"/>
         </Menu>
     </MenuBar>
     <HBox alignment="CENTER_RIGHT" styleClass="menu-bar" spacing="8.0" HBox.hgrow="ALWAYS"/>
-    <MenuBar>
+    <MenuBar fx:id="usersMenuBar">
         <Menu fx:id="logoutMenu" text="ADMIN">
             <MenuItem onAction="#logout" text="Logout">
                 <graphic>
                     <FontIcon iconLiteral="fth-log-out" iconSize="14"/>
                 </graphic>
             </MenuItem>
-            <MenuItem text="Korisnici" onAction="#viewUsers">
+            <MenuItem text="Korisnici" onAction="#viewUsers" fx:id="usersMenuItem">
                 <graphic>
                     <FontIcon iconLiteral="fth-users" iconSize="14"/>
                 </graphic>
