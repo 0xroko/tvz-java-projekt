@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2024.
- *
- *
- */
-
 package com.r.projektnizad.util.controlfx;
 
 import javafx.beans.binding.Bindings;
@@ -18,7 +12,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
-import org.controlsfx.control.textfield.TextFields;
 
 import java.util.Arrays;
 import java.util.function.Predicate;
@@ -49,12 +42,12 @@ import java.util.function.Predicate;
  * <p>
  * When pressing ESCAPE while the popup is showing, the item that was selected when the
  * popup opened will be re-selected (even if the user did select another item using the
- * cursor keys.
+ * cursor keys.)
  * <p>
  * Other than the {@link ComboBox}, the SearchableComboBox does open the Popup when using
  * the cursor keys (the {@link ComboBox} does only change the selected item without
  * opening the popup). This combined with the behavior of the ESCAPE key does allow to
- * go through the list of items with the cursor keys and than press ESCAPE to revert
+ * go through the list of items with the cursor keys and then press ESCAPE to revert
  * the changes.
  *
  * <h3>Screenshot</h3>
@@ -72,7 +65,7 @@ import java.util.function.Predicate;
  * the search field. The combo box popup will only show ["Berlin", "Bern", "Alberta"].
  * <p>
  * To select the first item ("Berlin"), the user can now either just press ENTER or TAB,
- * or first select this item using the cursor DOWN key and press ENTER or TAB afterwards,
+ * or first select this item using the cursor DOWN key and press ENTER or TAB afterward,
  * or select this item using the mouse.
  * <p>
  * To select the second or third item, the user either
@@ -210,7 +203,7 @@ public class SearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
   }
 
   private FilteredList<T> createFilteredList() {
-    return new FilteredList<T>(getSkinnable().getItems(), predicate());
+    return new FilteredList<>(getSkinnable().getItems(), predicate());
   }
 
   /**
@@ -246,7 +239,7 @@ public class SearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
     return value ->
     {
       String lowerCaseDisplayText = getDisplayText(value).toLowerCase();
-      return Arrays.stream(lowerCaseSearchWords).allMatch(word -> lowerCaseDisplayText.contains(word));
+      return Arrays.stream(lowerCaseSearchWords).allMatch(lowerCaseDisplayText::contains);
     };
   }
 
@@ -264,8 +257,7 @@ public class SearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
    */
   private void preventDefaultComboBoxKeyListener() {
     filteredComboBox.skinProperty().addListener((obs, oldVal, newVal) -> {
-      if (newVal instanceof ComboBoxListViewSkin) {
-        ComboBoxListViewSkin cblwSkin = (ComboBoxListViewSkin) newVal;
+      if (newVal instanceof ComboBoxListViewSkin cblwSkin) {
         if (cblwSkin.getPopupContent() instanceof ListView) {
           final ListView<T> listView = (ListView<T>) cblwSkin.getPopupContent();
           if (listView != null) {

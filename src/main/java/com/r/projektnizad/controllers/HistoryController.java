@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
@@ -20,18 +21,30 @@ import java.util.Date;
 import java.util.Optional;
 
 public final class HistoryController implements CleanableScene {
-  public CustomTableView<Change<Entity>> historyTableView;
-  public TableColumn<Change<?>, String> dateTableColumn;
-  public TableColumn<Change<?>, String> entityNameTableColumn;
-  public TableColumn<Change<?>, String> descriptionTableColumn;
-  public TableColumn<Change<?>, Long> idTableColumn;
-  public TableColumn<Change<?>, String> userTableColumn;
-  public TableColumn<Change<?>, String> typeTableColumn;
-  public ComboBox<String> entityFilterCombobox;
-  public DatePicker filterDatePicker;
-  public ComboBox<String> userFilterComboBox;
-  public String allFilter = "Svi";
-  public ChangeReaderThread changeReaderThread = new ChangeReaderThread();
+  @FXML
+  private CustomTableView<Change<Entity>> historyTableView;
+  @FXML
+  private TableColumn<Change<?>, String> dateTableColumn;
+  @FXML
+  private TableColumn<Change<?>, String> entityNameTableColumn;
+  @FXML
+  private TableColumn<Change<?>, String> descriptionTableColumn;
+  @FXML
+  private TableColumn<Change<?>, Long> idTableColumn;
+  @FXML
+  private TableColumn<Change<?>, String> userTableColumn;
+  @FXML
+  private TableColumn<Change<?>, String> typeTableColumn;
+  @FXML
+  private ComboBox<String> entityFilterCombobox;
+  @FXML
+  private DatePicker filterDatePicker;
+  @FXML
+  private ComboBox<String> userFilterComboBox;
+  private final String allFilter = "Svi";
+  private final ChangeReaderThread changeReaderThread = new ChangeReaderThread();
+
+  private boolean dateChanged = false;
 
   void setFiltersFromChanges(ArrayList<Change<Entity>> changes) {
     var entities = new ArrayList<String>();
@@ -80,11 +93,9 @@ public final class HistoryController implements CleanableScene {
   }
 
   void dateSearch() {
+    dateChanged = true;
     Date date = filterDatePicker.getValue() == null ? new Date() : new Date(filterDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-    changeReaderThread.updateParams(date);
-  }
-
-  void search() {
+    changeReaderThread.updateParamsAndRerun(date);
   }
 
   public void initialize() {
@@ -95,10 +106,10 @@ public final class HistoryController implements CleanableScene {
     idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getActualEntity().getId()).asObject());
 
     changeReaderThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
-      Platform.runLater(() -> {
-        setFiltersFromChanges(newValue);
-      });
-
+      if (dateChanged) {
+        Platform.runLater(() -> setFiltersFromChanges(newValue));
+        dateChanged = false;
+      }
       historyTableView.setItems(filter(newValue));
       historyTableView.autoResizeColumns();
     });
@@ -116,8 +127,10 @@ public final class HistoryController implements CleanableScene {
     userFilterComboBox.setValue(allFilter);
 
     filterDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> dateSearch());
-    entityFilterCombobox.valueProperty().addListener((observable, oldValue, newValue) -> search());
-    userFilterComboBox.valueProperty().addListener((observable, oldValue, newValue) -> search());
+    entityFilterCombobox.valueProperty().addListener((observable, oldValue, newValue) -> {
+    });
+    userFilterComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+    });
 
     dateSearch();
   }

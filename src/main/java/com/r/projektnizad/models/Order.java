@@ -1,14 +1,17 @@
 package com.r.projektnizad.models;
 
-import com.r.projektnizad.decorators.NamedHistoryMember;
+import com.r.projektnizad.annotations.NamedHistoryMember;
 import com.r.projektnizad.enums.OrderStatus;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Order extends Entity implements Serializable, Cloneable {
+  @Serial
+  private static final long serialVersionUID = 1L;
   @NamedHistoryMember("Stavke")
   private ArrayList<ItemOnOrder> itemsOnOrder;
   @NamedHistoryMember("Stol")

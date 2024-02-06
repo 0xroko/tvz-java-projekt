@@ -1,23 +1,23 @@
 package com.r.projektnizad.models.change;
 
-import com.r.projektnizad.decorators.NamedHistoryMember;
-import com.r.projektnizad.decorators.NamedHistoryMemberWithAccessor;
+import com.r.projektnizad.annotations.NamedHistoryMember;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.Entity;
 import com.r.projektnizad.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
 public abstract class Change<T extends Entity> implements Serializable {
-  T oldEntity, newEntity;
-  LocalDateTime dateTime;
-  User user;
-
-  public final Long serialVersionUID = 9043873L;
+  @Serial
+  private static final long serialVersionUID = 1;
+  private T oldEntity, newEntity;
+  private LocalDateTime dateTime;
+  private User user;
 
   private static final Logger logger = LoggerFactory.getLogger(Change.class);
 
@@ -38,6 +38,37 @@ public abstract class Change<T extends Entity> implements Serializable {
     return list;
   }
 
+  public static <T> Map<String, String> diffSingleEntity(T entity) {
+    Map<String, String> diff = new LinkedHashMap<>();
+    for (var field : entity.getClass().getDeclaredFields()) {
+      field.setAccessible(true);
+      try {
+        Object value = field.get(entity);
+        boolean hasCustomName = field.isAnnotationPresent(NamedHistoryMember.class);
+        if (!hasCustomName) continue;
+        String name = field.getAnnotation(NamedHistoryMember.class).value();
+        if (value instanceof Entity) {
+          String entityName = ((Entity) value).getEntityName();
+          diff.put(name, entityName);
+        } else if (value instanceof Enum) {
+          try {
+            String valueName = (String) value.getClass().getMethod
+                    ("getName").invoke(value);
+            diff.put(name, valueName);
+          } catch (Exception e) {
+            logger.error("Error while comparing enums", e);
+          }
+        } else {
+          diff.put(name, value.toString());
+        }
+
+      } catch (IllegalAccessException e) {
+        logger.error("Error while accessing field", e);
+      }
+    }
+    return diff;
+  }
+
   public Map<String, String> diff() {
     return diff(false, "");
   }
@@ -46,13 +77,11 @@ public abstract class Change<T extends Entity> implements Serializable {
     Map<String, String> diff = new LinkedHashMap<>();
 
     if (oldEntity == null) {
-      diff.put("id", "null -> " + newEntity.getId());
-      return diff;
+      return Change.diffSingleEntity(newEntity);
     }
 
     if (newEntity == null) {
-      diff.put("id", oldEntity.getId() + " -> null");
-      return diff;
+      return Change.diffSingleEntity(oldEntity);
     }
 
     // check all members of oldEntity and newEntity
@@ -63,7 +92,6 @@ public abstract class Change<T extends Entity> implements Serializable {
         Object oldValue = field.get(oldEntity);
         Object newValue = field.get(newEntity);
 
-        // is annotation present
         boolean hasCustomName = field.isAnnotationPresent(NamedHistoryMember.class);
         if (!hasCustomName) continue;
 
@@ -75,7 +103,7 @@ public abstract class Change<T extends Entity> implements Serializable {
           if (oldValue instanceof Entity) {
             if (newValue == null) continue;
             String entityName = ((Entity) oldValue).getEntityName();
-            diff.putAll(((Change<?>) new ModifyChange<>((Entity) oldValue, (Entity) newValue)).diff(true, prefix + entityName));
+            diff.putAll(new ModifyChange<>((Entity) oldValue, (Entity) newValue).diff(true, prefix + entityName));
             continue;
           }
           // if enum type, try calling getName method

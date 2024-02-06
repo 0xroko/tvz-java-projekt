@@ -12,7 +12,6 @@ import com.r.projektnizad.threads.SignaledTaskThread;
 import com.r.projektnizad.util.*;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -71,7 +70,9 @@ public final class ViewCategoryController implements CleanableScene {
   private void edit(Category category) {
     new ModifyCategoryDialog(Optional.ofNullable(category)).showAndWait().ifPresent(newCategory -> {
       try {
-        categoryRepository.update(category.getId(), newCategory);
+        if (category != null) {
+          categoryRepository.update(category.getId(), newCategory);
+        }
         new ChangeWriterThread<>(new ModifyChange<>(category, newCategory)).start();
         categoryTaskThread.signal();
       } catch (DatabaseActionFailException e) {

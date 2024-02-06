@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface Dao<T extends Entity> {
 
-  Optional<T> get(long id) throws DatabaseActionFailException;
-
   List<T> getAll() throws DatabaseActionFailException;
 
   void save(T t) throws DatabaseActionFailException;

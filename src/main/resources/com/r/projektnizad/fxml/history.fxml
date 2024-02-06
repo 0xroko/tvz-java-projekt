@@ -41,14 +41,14 @@
                 <ComboBox fx:id="entityFilterCombobox" prefWidth="150.0"/>
             </VBox>
             <VBox>
-                <Label text="Korsnik"/>
+                <Label text="Korisnik"/>
                 <ComboBox fx:id="userFilterComboBox" prefWidth="150.0"/>
             </VBox>
         </HBox>
         <CustomTableView fx:id="historyTableView" prefHeight="435.0" prefWidth="657.0" styleClass="dense"
                          GridPane.rowIndex="2">
             <columns>
-                <TableColumn fx:id="entityNameTableColumn" prefWidth="120.0" text="Enitet"/>
+                <TableColumn fx:id="entityNameTableColumn" prefWidth="120.0" text="Entitet"/>
                 <TableColumn fx:id="idTableColumn" prefWidth="90.0" text="ID"/>
                 <TableColumn fx:id="dateTableColumn" prefWidth="124.0" text="Datum/Vrijeme"/>
                 <TableColumn fx:id="userTableColumn" prefWidth="141.0" text="Korisnik"/>

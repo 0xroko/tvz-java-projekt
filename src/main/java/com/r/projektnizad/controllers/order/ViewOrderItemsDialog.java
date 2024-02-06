@@ -41,15 +41,13 @@ public final class ViewOrderItemsDialog extends Dialog<Boolean> implements Clean
   @FXML
   TableColumn<ItemOnOrder, String> categoryTableColumn;
 
-  Order order;
-  OrderRepository orderRepository = new OrderRepository();
-  SignaledTaskThread<List<ItemOnOrder>, Void> orderTaskThread;
+  final Order order;
+  final OrderRepository orderRepository = new OrderRepository();
+  final SignaledTaskThread<List<ItemOnOrder>, Void> orderTaskThread;
 
   @FXML
   void initialize() {
-    addItemToOrderButton.setOnAction(event -> {
-      addItemToOrder();
-    });
+    addItemToOrderButton.setOnAction(event -> addItemToOrder());
 
     itemNameTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
     statusTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStatus().getName()));
@@ -110,16 +108,16 @@ public final class ViewOrderItemsDialog extends Dialog<Boolean> implements Clean
 
   private void addItemToOrder() {
     new ModifyOrderItemsDialog().showAndWait().ifPresent(itemOnOrder -> {
-      itemOnOrder.forEach(t -> {
+      Order old = order.clone();
+      for (ItemOnOrder t : itemOnOrder) {
         try {
-          Order old = order.clone();
           orderRepository.saveItemOnOrder(order, t);
-          new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
-          orderTaskThread.signal();
         } catch (DatabaseActionFailException e) {
           new AppDialog().showExceptionMessage(e);
         }
-      });
+      }
+      new ChangeWriterThread<>(new ModifyChange<>(old, order)).start();
+      orderTaskThread.signal();
     });
   }
 

@@ -24,11 +24,6 @@ import java.util.Optional;
 public class OrderRepository implements Dao<Order> {
   private static final Logger logger = LoggerFactory.getLogger(OrderRepository.class);
 
-  @Override
-  public Optional<Order> get(long id) {
-    return Optional.empty();
-  }
-
   public List<ItemOnOrder> getItemsOnOrder(long orderId) throws DatabaseActionFailException {
     ArrayList<ItemOnOrder> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {

@@ -14,7 +14,6 @@ import com.r.projektnizad.models.ItemOnOrder;
 import com.r.projektnizad.repositories.ItemRepository;
 import com.r.projektnizad.util.*;
 import com.r.projektnizad.util.controlfx.SearchableComboBox;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -28,7 +27,7 @@ import java.util.Optional;
 
 public class ModifyOrderItemsDialog extends Dialog<List<ItemOnOrder>> {
   @FXML
-  private Spinner<Integer> stockSpinner;
+  private TextField stockTextField;
   @FXML
   private VBox itemComboBoxVBox;
   @FXML
@@ -38,7 +37,7 @@ public class ModifyOrderItemsDialog extends Dialog<List<ItemOnOrder>> {
   @FXML
   SearchableComboBox<Item> itemComboBox;
 
-  Validator validator = new Validator();
+  final Validator validator = new Validator();
 
   Optional<Item> item = Optional.empty();
 
@@ -67,28 +66,31 @@ public class ModifyOrderItemsDialog extends Dialog<List<ItemOnOrder>> {
       }
     });
 
-    stockSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 1, 1));
-    stockSpinner.setEditable(true);
-    stockSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      validator.validate();
-    });
+    stockTextField.setText("1");
+    Validators.buildTextFieldValidator(stockTextField, Validators.number(3, 0));
 
     validator.createCheck()
-            .dependsOn("amountTextField", stockSpinner.valueProperty())
+            .dependsOn("amountTextField", stockTextField.textProperty())
             .withMethod(c -> {
               if (item.isPresent()) {
+                if (stockTextField.getText().isEmpty()) {
+                  c.error("Unesite količinu");
+                  stockTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                  return;
+                }
                 try {
-                  if (stockSpinner.getValue() > item.get().getStock()) {
+                  int amount = Integer.parseInt(stockTextField.getText());
+                  if (amount > item.get().getStock()) {
                     c.error("Nema dovoljno (dostupno: " + item.get().getStock() + ")");
-                    stockSpinner.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                    stockTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
                     return;
                   }
                 } catch (NumberFormatException e) {
                   // silently ignore since validator will take care of it
                 }
               }
-              stockSpinner.pseudoClassStateChanged(Styles.STATE_DANGER, false);
-            }).decorates(stockSpinner)
+              stockTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
+            }).decorates(stockTextField)
             .immediate();
 
     amountErrorLabel.pseudoClassStateChanged(Styles.STATE_DANGER, true);
@@ -123,10 +125,15 @@ public class ModifyOrderItemsDialog extends Dialog<List<ItemOnOrder>> {
         ItemOnOrder i = new ItemOnOrder(null, itemComboBox.getValue().clone(), LocalDateTime.now(), ItemOnOrderStatus.DONE);
         // create list of n items i
         List<ItemOnOrder> items = new ArrayList<>();
-        for (int j = 0; j < stockSpinner.getValue(); j++) {
-          items.add(i.clone());
+        try {
+          int amount = Integer.parseInt(stockTextField.getText());
+          for (int j = 0; j < amount; j++) {
+            items.add(i.clone());
+          }
+          return items;
+        } catch (NumberFormatException ignored) {
         }
-        return items;
+
       }
       return null;
     });

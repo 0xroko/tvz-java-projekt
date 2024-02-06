@@ -4,7 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableRow;
-import javafx.scene.input.KeyCharacterCombination;
 
 import java.util.Map;
 import java.util.function.Consumer;

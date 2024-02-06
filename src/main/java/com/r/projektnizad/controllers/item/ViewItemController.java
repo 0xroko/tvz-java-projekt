@@ -15,9 +15,7 @@ import com.r.projektnizad.util.*;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyEvent;
 
 import java.time.Duration;
 import java.util.*;

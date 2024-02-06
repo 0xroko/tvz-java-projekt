@@ -33,7 +33,7 @@
                 <Insets bottom="16.0" top="16.0"/>
             </padding>
             <Label styleClass="title-2" text="Artikli/Meni"/>
-            <Label text="" HBox.hgrow="ALWAYS"/>
+            <Label HBox.hgrow="ALWAYS"/>
             <Button onAction="#openAddItem" text="Dodaj artikl"/>
         </HBox>
         <VBox GridPane.rowIndex="2">
@@ -45,7 +45,7 @@
                     <Insets bottom="16.0" top="16.0"/>
                 </padding>
                 <VBox>
-                    <Label text="Naziv"/>
+                    <Label text="Pretraga"/>
                     <TextField fx:id="nameSearchTextField" prefWidth="200.0"/>
                 </VBox>
                 <VBox>

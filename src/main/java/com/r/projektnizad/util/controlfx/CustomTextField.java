@@ -15,18 +15,18 @@ import javafx.scene.control.TextField;
 
 public class CustomTextField extends TextField {
 
-  /**************************************************************************
-   *
-   * Private fields
-   *
-   **************************************************************************/
+  /*************************************************************************
+   <p>
+   Private fields
+
+   */
 
 
-  /**************************************************************************
-   *
-   * Constructors
-   *
-   **************************************************************************/
+  /*************************************************************************
+   <p>
+   Constructors
+
+   */
 
   /**
    * Instantiates a default CustomTextField.
@@ -37,13 +37,13 @@ public class CustomTextField extends TextField {
 
 
   /**************************************************************************
-   *
+   * <p>
    * Properties
    *
    **************************************************************************/
 
   // --- left
-  private ObjectProperty<Node> left = new SimpleObjectProperty<>(this, "left"); //$NON-NLS-1$
+  private final ObjectProperty<Node> left = new SimpleObjectProperty<>(this, "left"); //$NON-NLS-1$
 
   /**
    * @return An ObjectProperty wrapping the {@link Node} that is placed
@@ -64,8 +64,6 @@ public class CustomTextField extends TextField {
   /**
    * Sets the {@link Node} that is placed on the left of
    * the text field.
-   *
-   * @param value
    */
   public final void setLeft(Node value) {
     left.set(value);
@@ -73,7 +71,7 @@ public class CustomTextField extends TextField {
 
 
   // --- right
-  private ObjectProperty<Node> right = new SimpleObjectProperty<>(this, "right"); //$NON-NLS-1$
+  private final ObjectProperty<Node> right = new SimpleObjectProperty<>(this, "right"); //$NON-NLS-1$
 
   /**
    * Property representing the {@link Node} that is placed on the right of
@@ -96,19 +94,17 @@ public class CustomTextField extends TextField {
   /**
    * Sets the {@link Node} that is placed on the right of
    * the text field.
-   *
-   * @param value
    */
   public final void setRight(Node value) {
     right.set(value);
   }
 
 
-  /**************************************************************************
-   *
-   * Public API
-   *
-   **************************************************************************/
+  /*************************************************************************
+   <p>
+   Public API
+
+   */
 
   /**
    * {@inheritDoc}

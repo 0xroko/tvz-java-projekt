@@ -1,10 +1,13 @@
 package com.r.projektnizad.models;
 
-import com.r.projektnizad.decorators.NamedHistoryMember;
+import com.r.projektnizad.annotations.NamedHistoryMember;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Table extends Entity implements Serializable, Cloneable {
+  @Serial
+  private static final long serialVersionUID = 1L;
   @NamedHistoryMember("Ime")
   private String name;
   @NamedHistoryMember("Opis")
@@ -51,8 +54,7 @@ public class Table extends Entity implements Serializable, Cloneable {
   @Override
   public Table clone() {
     try {
-      Table clone = (Table) super.clone();
-      return clone;
+      return (Table) super.clone();
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
     }

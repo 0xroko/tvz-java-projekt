@@ -7,19 +7,7 @@
 <VBox xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.r.projektnizad.controllers.Main">
     <fx:include source="menubar.fxml"/>
-    <VBox alignment="CENTER" prefHeight="890.0" prefWidth="1280.0"  spacing="20.0">
-        <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-        </padding>
-        <Label fx:id="problems"/>
-        <TextField fx:id="input"/>
-        <Button styleClass="accent" onAction="#onHelloButtonClick" text="Hello!"/>
-        <ComboBox fx:id="combo" prefWidth="150.0"/>
-        <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0">
-            <columns>
-                <TableColumn fx:id="col1" prefWidth="107.0" text="Test"/>
-                <TableColumn fx:id="col2" prefWidth="121.0" text="Test2"/>
-            </columns>
-        </TableView>
+    <VBox alignment="CENTER" prefHeight="890.0" prefWidth="1280.0" spacing="20.0">
+
     </VBox>
 </VBox>

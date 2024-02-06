@@ -18,11 +18,6 @@ public class CategoryRepository implements Dao<Category> {
   private static final Logger logger = LoggerFactory.getLogger(CategoryRepository.class);
 
   @Override
-  public Optional<Category> get(long id) throws DatabaseActionFailException {
-    return Optional.empty();
-  }
-
-  @Override
   public List<Category> getAll() throws DatabaseActionFailException {
     List<Category> categories = new ArrayList<>();
     try (var conn = Database.connect()) {

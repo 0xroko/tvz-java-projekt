@@ -1,7 +1,5 @@
 package com.r.projektnizad.enums;
 
-import com.r.projektnizad.util.Filter;
-
 import java.util.ArrayList;
 
 public enum OrderStatus {

@@ -6,6 +6,7 @@
 
 package com.r.projektnizad.controllers.table;
 
+import atlantafx.base.theme.Styles;
 import com.r.projektnizad.models.Table;
 import com.r.projektnizad.util.CustomButtonTypes;
 import com.r.projektnizad.util.Navigator;
@@ -36,21 +37,27 @@ public class ModifyTableDialog extends Dialog<Table> {
 
     validator.createCheck().dependsOn("seatsTextField", seatsTextField.textProperty()).withMethod(c -> {
       if (!seatsTextField.getText().isEmpty()) {
+        seatsTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
       } else {
+        seatsTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
         c.error("Broj sjedala mora biti cijeli broj");
       }
     }).decorates(seatsTextField).immediate();
 
     validator.createCheck().dependsOn("nameTextField", nameTextField.textProperty()).withMethod(c -> {
       if (!nameTextField.getText().isEmpty()) {
+        nameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
       } else {
+        nameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
         c.error("Ime stola ne smije biti prazno");
       }
     }).decorates(nameTextField).immediate();
 
     validator.createCheck().dependsOn("descriptionTextField", descriptionTextField.textProperty()).withMethod(c -> {
       if (!descriptionTextField.getText().isEmpty()) {
+        descriptionTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
       } else {
+        descriptionTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
         c.error("Opis stola ne smije biti prazan");
       }
     }).decorates(descriptionTextField).immediate();

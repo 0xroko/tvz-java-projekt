@@ -12,37 +12,28 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Navigator {
   private static final Logger logger = LoggerFactory.getLogger(Navigator.class);
   static final public String baseResourcePath = "/com/r/projektnizad/";
   static public Stage rootStage;
-  public static ThemeManager themeManager = new ThemeManager();
+  public static final ThemeManager themeManager = new ThemeManager();
   static Object controller;
-
-  public static void setController(Object controller) {
-    Navigator.controller = controller;
-  }
-
-  static void applyStyles(Scene scene) {
-    // set stylesheet
-    // scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/styles.css")).toExternalForm());
-    //  scene.getStylesheets().add(Objects.requireNonNull(Navigator.class.getResource("/com/r/projektnizad/styles/fontstyle.css")).toExternalForm());
-  }
 
   static public FXMLLoader load(String resourcePath) {
     return new FXMLLoader(Objects.requireNonNull(Main.class.getResource(baseResourcePath + "fxml/" + resourcePath)));
   }
 
-  static public Parent loadParent(String resourcePath) {
+  static public Optional<Parent> loadParent(String resourcePath) {
     try {
       FXMLLoader l = load(resourcePath);
       Parent parent = l.load();
       controller = l.getController();
-      return parent;
+      return Optional.ofNullable(parent);
     } catch (IOException e) {
-      logger.error("Error loading resource: " + resourcePath);
-      return null;
+      logger.error("Error loading resource: " + resourcePath, e);
+      return Optional.empty();
     }
   }
 
@@ -54,9 +45,11 @@ public class Navigator {
 
   static public void navigate(String resourcePath, String title) {
     cleanUpLastScene();
-    Parent window = loadParent(resourcePath);
-    Scene scene = new Scene(window);
-    applyStyles(scene);
+    Optional<Parent> window = loadParent(resourcePath);
+    if (window.isEmpty()) {
+      return;
+    }
+    Scene scene = new Scene(window.get());
 
     // run stop method on previous view
     if (rootStage == null) {
@@ -93,7 +86,6 @@ public class Navigator {
     } catch (IOException e) {
       logger.error("Error loading resource: " + resourcePath, e);
     }
-    applyStyles(controller.getDialogPane().getScene());
 
     // add on close listener to clean up
     controller.setOnCloseRequest(e -> {

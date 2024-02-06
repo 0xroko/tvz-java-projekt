@@ -24,11 +24,6 @@ public class TableRepository implements Dao<Table> {
   private static final Logger logger = LoggerFactory.getLogger(TableRepository.class);
 
   @Override
-  public Optional<Table> get(long id) {
-    return Optional.empty();
-  }
-
-  @Override
   public List<Table> getAll() throws DatabaseActionFailException {
     ArrayList<Table> tables = new ArrayList<>();
     try (Connection connection = Database.connect()) {
@@ -51,11 +46,15 @@ public class TableRepository implements Dao<Table> {
   @Override
   public void save(Table table) throws DatabaseActionFailException {
     try (Connection connection = Database.connect()) {
-      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `table` (name, description, seats) VALUES (?, ?, ?)");
+      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO `table` (name, description, seats) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setString(1, table.getName());
       preparedStatement.setString(2, table.getDescription());
       preparedStatement.setLong(3, table.getSeats());
       preparedStatement.executeUpdate();
+      ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+      if (generatedKeys.next()) {
+        table.setId(generatedKeys.getLong(1));
+      }
     } catch (Exception e) {
       logger.error("Error while saving table", e);
       throw new DatabaseActionFailException("Greška prilikom spremanja stola.");

@@ -13,7 +13,7 @@ public class Validators {
   }
 
   // Time regex but allow empty string as well
-  public static String time = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+  public static final String time = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
 
   public static void buildTextFieldValidator(TextField input, String regex) {
     input.textProperty().addListener((observable, oldValue, newValue) -> {

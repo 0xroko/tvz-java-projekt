@@ -14,17 +14,23 @@ import java.util.Date;
 
 public class ChangeReaderThread extends Thread {
   private final ObservableThreadTask<ArrayList<Change<Entity>>, Date> task = new ObservableThreadTask<>();
-
   private static final Logger logger = LoggerFactory.getLogger(ChangeReaderThread.class);
+  private final HistoryChangeService historyChangeService = HistoryChangeService.getInstance();
 
   public ReadOnlyObjectProperty<ArrayList<Change<Entity>>> getResultProperty() {
     return task.getResultProperty();
   }
 
-  private final HistoryChangeService historyChangeService = HistoryChangeService.getInstance();
-
   public void updateParams(Date date) {
     task.setParam(date);
+  }
+
+  boolean forceRerun = false;
+
+  public void updateParamsAndRerun(Date date) {
+    forceRerun = true;
+    task.setParam(date);
+    this.interrupt();
   }
 
   public ChangeReaderThread() {
@@ -51,8 +57,13 @@ public class ChangeReaderThread extends Thread {
     while (!Thread.currentThread().isInterrupted()) {
       try {
         task.call();
-        Thread.sleep(1000);
+        logger.info("ChangeReaderThread finished");
+        Thread.sleep(5000);
       } catch (InterruptedException e) {
+        if (forceRerun) {
+          forceRerun = false;
+          continue;
+        }
         Thread.currentThread().interrupt();
       }
     }

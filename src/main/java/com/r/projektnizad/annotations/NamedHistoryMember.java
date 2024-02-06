@@ -1,6 +1,4 @@
-package com.r.projektnizad.decorators;
-
-import com.r.projektnizad.models.change.ChangeAccessor;
+package com.r.projektnizad.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface NamedHistoryMemberWithAccessor {
+public @interface NamedHistoryMember {
   String value();
 }

@@ -4,11 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum UserType {
-  DELETE(-1, "[izbrisan]"),
+  DELETE(-999, "[izbrisan]"),
+  ALL(-1, "Svi"),
   ADMIN(0, "Admin"),
-  MANAGER(1, "Menadžer"),
-  WAITER(2, "Konobar"),
-  COOK(3, "Kuhar");
+  //MANAGER(1, "Menadžer"),
+  WAITER(2, "Konobar");
+  //COOK(3, "Kuhar");
 
   private final String name;
 
@@ -37,6 +38,11 @@ public enum UserType {
   }
 
   public static List<UserType> getValues() {
-    return Arrays.stream(UserType.values()).filter(type -> !type.equals(UserType.DELETE)).toList();
+    return Arrays.stream(UserType.values()).filter(type -> type.getCode() >= 0).toList();
+  }
+
+  // get filterable values
+  public static List<UserType> getFilterableValues() {
+    return Arrays.stream(UserType.values()).filter(type -> type.getCode() >= -1).toList();
   }
 }

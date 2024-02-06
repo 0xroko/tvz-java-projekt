@@ -5,7 +5,7 @@ import com.r.projektnizad.models.change.Change;
 import com.r.projektnizad.services.HistoryChangeService;
 
 public class ChangeWriterThread<T extends Entity> extends Thread {
-  Change<T> change;
+  final Change<T> change;
 
   public ChangeWriterThread(Change<T> change) {
     super();

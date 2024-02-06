@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.VBox?>
-
-<?import javafx.scene.control.ComboBox?>
 <?import atlantafx.base.controls.PasswordTextField?>
-<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <VBox alignment="CENTER" prefHeight="890.0" prefWidth="1280.0" xmlns:fx="http://javafx.com/fxml/1"
       xmlns="http://javafx.com/javafx/21.0.1">
     <VBox alignment="CENTER_LEFT" maxWidth="300" spacing="20.0" VBox.vgrow="ALWAYS">

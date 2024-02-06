@@ -3,10 +3,13 @@ package com.r.projektnizad.models;
 import com.r.projektnizad.enums.ItemOnOrderStatus;
 import com.r.projektnizad.models.change.ChangeAccessor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class ItemOnOrder extends Entity implements Serializable, Cloneable, ChangeAccessor {
+  @Serial
+  private static final long serialVersionUID = 1L;
   private Item item;
   private LocalDateTime orderTime;
   private ItemOnOrderStatus status;

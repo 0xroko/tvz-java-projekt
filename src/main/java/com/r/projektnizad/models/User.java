@@ -1,12 +1,13 @@
 package com.r.projektnizad.models;
 
-import com.r.projektnizad.decorators.NamedHistoryMember;
+import com.r.projektnizad.annotations.NamedHistoryMember;
 import com.r.projektnizad.enums.UserType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
@@ -15,7 +16,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class User extends Entity implements Serializable, Cloneable {
-  static Logger logger = LoggerFactory.getLogger(User.class);
+  @Serial
+  private static final long serialVersionUID = 1L;
+  static final Logger logger = LoggerFactory.getLogger(User.class);
   @NamedHistoryMember("Korisničko ime")
   private String username;
   private UserPassword password;

@@ -1,12 +1,7 @@
 package com.r.projektnizad.threads;
 
 import com.r.projektnizad.models.ObservableThreadTask;
-import javafx.beans.Observable;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ObservableStringValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

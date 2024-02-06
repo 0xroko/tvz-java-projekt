@@ -24,7 +24,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TextField;
-import org.h2.result.Row;
 
 import java.util.LinkedHashMap;
 import java.util.List;

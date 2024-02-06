@@ -23,11 +23,6 @@ public class ItemRepository implements Dao<Item> {
   private static final Logger logger = LoggerFactory.getLogger(ItemRepository.class);
 
   @Override
-  public Optional<Item> get(long id) {
-    return Optional.empty();
-  }
-
-  @Override
   public List<Item> getAll() throws DatabaseActionFailException {
     ArrayList<Item> items = new ArrayList<>();
     try (Connection conn = Database.connect()) {

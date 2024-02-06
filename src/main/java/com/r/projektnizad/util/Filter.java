@@ -2,7 +2,6 @@ package com.r.projektnizad.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -18,7 +17,7 @@ public class Filter {
 
   public static class FilterItem {
     String value;
-    FilterType type;
+    final FilterType type;
 
     public FilterItem(String value, FilterType type) {
       this.value = value;

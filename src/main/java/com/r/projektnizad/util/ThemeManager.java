@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -116,22 +114,6 @@ public class ThemeManager {
     customCSSRules.remove(selector);
   }
 
-/*
-  private void setOrRemoveColor(String colorName, Color color) {
-    Objects.requireNonNull(colorName);
-    if (color != null) {
-      setCustomDeclaration(colorName, JColor.color(
-              (float) color.getRed(),
-              (float) color.getGreen(),
-              (float) color.getBlue(),
-              (float) color.getOpacity()).getColorHexWithAlpha()
-      );
-    } else {
-      removeCustomDeclaration(colorName);
-    }
-  }
-*/
-
   public void setFontFamily(String fontFamily) {
     Objects.requireNonNull(fontFamily);
     setCustomDeclaration("-fx-font-family", "\"" + fontFamily + "\"");
@@ -150,7 +132,7 @@ public class ThemeManager {
     customCSSDeclarations.forEach((k, v) -> {
       css.append("\t");
       css.append(k);
-      css.append(":\s");
+      css.append(": ");
       css.append(v);
       css.append(";\n");
     });

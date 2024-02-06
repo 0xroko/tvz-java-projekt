@@ -15,7 +15,6 @@ import javafx.scene.layout.VBox;
 import net.synedra.validatorfx.Validator;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +38,7 @@ public class ModifyItemDialog extends Dialog<Item> {
   @FXML
   VBox preparationField;
 
-  CategoryRepository categoryRepository = new CategoryRepository();
+  final CategoryRepository categoryRepository = new CategoryRepository();
 
   @FXML
   void initialize() {
@@ -64,9 +63,7 @@ public class ModifyItemDialog extends Dialog<Item> {
     Validators.buildTextFieldValidator(stockTextField, Validators.number(2, 2));
 
     // only allow preparation time to be visible if the item is a PREPARABLE
-    itemTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      preparationField.setVisible(newValue == ItemType.PREPARABLE);
-    });
+    itemTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> preparationField.setVisible(newValue == ItemType.PREPARABLE));
 
 
     validator.createCheck()
@@ -154,9 +151,7 @@ public class ModifyItemDialog extends Dialog<Item> {
 
       // since classes are not equal, we need to find the category with the same id
       // and select it
-      categoryComboBox.getItems().stream().filter(category -> item.getCategory().getId().equals(category.getId())).findFirst().ifPresent(category -> {
-        categoryComboBox.getSelectionModel().select(category);
-      });
+      categoryComboBox.getItems().stream().filter(category -> item.getCategory().getId().equals(category.getId())).findFirst().ifPresent(category -> categoryComboBox.getSelectionModel().select(category));
     } else {
       preparationTimeTextField.setText("00:00");
       categoryComboBox.getSelectionModel().selectFirst();

@@ -1,13 +1,16 @@
 package com.r.projektnizad.models;
 
-import com.r.projektnizad.decorators.NamedHistoryMember;
+import com.r.projektnizad.annotations.NamedHistoryMember;
 import com.r.projektnizad.enums.ItemType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Duration;
 
 public class Item extends Entity implements Serializable, Cloneable {
+  @Serial
+  private static final long serialVersionUID = 1L;
   @NamedHistoryMember("Naziv")
   private String name;
   @NamedHistoryMember("Opis")
@@ -19,7 +22,7 @@ public class Item extends Entity implements Serializable, Cloneable {
   @NamedHistoryMember("Zaliha")
   private Long stock;
   @NamedHistoryMember("Povećanje zalihe")
-  private Long defaultStockIncrement = 1L;
+  private Long defaultStockIncrement;
   @NamedHistoryMember("Tip")
   private ItemType itemType;
   @NamedHistoryMember("Vrijeme pripreme")

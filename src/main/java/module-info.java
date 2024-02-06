@@ -34,7 +34,7 @@ module com.r.projektnizad {
   exports com.r.projektnizad.controllers.order;
   exports com.r.projektnizad.controllers.user;
   exports com.r.projektnizad.controllers.table;
-  
+
   exports com.r.projektnizad.main;
   exports com.r.projektnizad.threads;
   exports com.r.projektnizad.models;

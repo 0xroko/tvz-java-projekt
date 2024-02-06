@@ -7,11 +7,10 @@
 package com.r.projektnizad.controllers.user;
 
 import atlantafx.base.controls.PasswordTextField;
+import atlantafx.base.theme.Styles;
 import com.r.projektnizad.enums.UserType;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.models.User;
-import com.r.projektnizad.models.change.AddChange;
-import com.r.projektnizad.threads.ChangeWriterThread;
 import com.r.projektnizad.util.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -34,7 +33,7 @@ public class ModifyUserDialog extends Dialog<Boolean> {
   @FXML
   private Label titleLabel;
 
-  Validator validator = new Validator();
+  final Validator validator = new Validator();
 
   @FXML
   private void initialize() {
@@ -47,7 +46,15 @@ public class ModifyUserDialog extends Dialog<Boolean> {
             .withMethod(c -> {
               if (userNameTextField.getText().isEmpty()) {
                 c.error("Korisničko ime je obavezno");
+                userNameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                return;
               }
+              if (Main.authService.getUsers().stream().anyMatch(u -> u.getUsername().equals(userNameTextField.getText()))) {
+                c.error("Korisnik već postoji");
+                userNameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                return;
+              }
+              userNameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
             }).decorates(userNameTextField).immediate();
 
     validator.validationResultProperty().addListener((observable, oldValue, newValue) -> {
@@ -74,10 +81,15 @@ public class ModifyUserDialog extends Dialog<Boolean> {
               .withMethod(c -> {
                 if (passwordTextField.getPassword().isEmpty()) {
                   c.error("Lozinka je obavezna");
+                  passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                  return;
                 }
                 if (passwordTextField.getPassword().length() < Config.PASSWORD_MIN_LENGTH) {
                   c.error("Lozinka je prekratka");
+                  passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                  return;
                 }
+                passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
               }).decorates(passwordTextField).immediate();
 
       validator.createCheck()
@@ -86,7 +98,10 @@ public class ModifyUserDialog extends Dialog<Boolean> {
               .withMethod(c -> {
                 if (!passwordAgainTextField.getPassword().equals(passwordTextField.getPassword())) {
                   c.error("Lozinke se ne podudaraju");
+                  passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                  return;
                 }
+                passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
               }).decorates(passwordAgainTextField).immediate();
     }
 

@@ -36,7 +36,7 @@ public class ModifyOrderDialog extends Dialog<Order> {
   @FXML
   VBox dateTimeField;
 
-  Validator validator = new Validator();
+  final Validator validator = new Validator();
 
   @FXML
   void initialize() {
@@ -59,7 +59,10 @@ public class ModifyOrderDialog extends Dialog<Order> {
     // revalidate time field when nowCheckBox is selected
     nowCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {
+        titleLabel.setText("Dodaj narudžbu");
         timeTextField.setText("00:00");
+      } else {
+        titleLabel.setText("Dodaj rezervaciju");
       }
     });
 

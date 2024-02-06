@@ -7,12 +7,12 @@
 package com.r.projektnizad.controllers.user;
 
 import atlantafx.base.controls.PasswordTextField;
+import atlantafx.base.theme.Styles;
 import com.r.projektnizad.main.Main;
 import com.r.projektnizad.util.AppDialog;
 import com.r.projektnizad.util.CustomButtonTypes;
 import com.r.projektnizad.util.Navigator;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import net.synedra.validatorfx.Validator;
 
@@ -23,8 +23,7 @@ public class ChangePasswordDialog extends Dialog<Boolean> {
   private PasswordTextField passwordTextField;
   @FXML
   private PasswordTextField passwordAgainTextField;
-
-  Validator validator = new Validator();
+  final Validator validator = new Validator();
 
   @FXML
   private void initialize() {
@@ -33,18 +32,26 @@ public class ChangePasswordDialog extends Dialog<Boolean> {
             .withMethod(c -> {
               if (passwordTextField.getPassword().length() < PASSWORD_MIN_LENGTH) {
                 c.error("Lozinka je prekratka");
+                passwordTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                return;
               }
               if (passwordTextField.getPassword().isEmpty()) {
                 c.error("Lozinka je obavezna");
+                passwordTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
+                return;
               }
+              passwordTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
             }).decorates(passwordTextField).immediate();
     validator.createCheck()
             .dependsOn("passwordAgainTextField", passwordAgainTextField.textProperty())
             .dependsOn("passwordTextField", passwordTextField.textProperty())
             .withMethod(c -> {
               if (!passwordAgainTextField.getPassword().equals(passwordTextField.getPassword())) {
+                passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
                 c.error("Lozinke se ne podudaraju");
+                return;
               }
+              passwordAgainTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
             }).decorates(passwordAgainTextField).immediate();
 
     validator.validationResultProperty().addListener((observable, oldValue, newValue) -> {

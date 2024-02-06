@@ -25,14 +25,32 @@
         <VBox.margin>
             <Insets left="16.0" right="16.0" top="16.0"/>
         </VBox.margin>
-        <Label styleClass="title-2" text="Korisnici"/>
         <HBox spacing="16.0" GridPane.rowIndex="1">
             <padding>
                 <Insets bottom="16.0" top="16.0"/>
             </padding>
+            <Label styleClass="title-2" text="Korisnici"/>
             <Button onAction="#openAddUser" text="Dodaj korisnika"/>
         </HBox>
-        <CustomTableView GridPane.rowIndex="2" fx:id="userTableView" styleClass="dense">
+        <VBox GridPane.rowIndex="2">
+            <padding>
+                <Insets bottom="16.0"/>
+            </padding>
+            <HBox spacing="16.0">
+                <padding>
+                    <Insets bottom="16.0" top="16.0"/>
+                </padding>
+                <VBox>
+                    <Label text="Pretraga"/>
+                    <TextField fx:id="nameSearchTextField" prefWidth="200.0"/>
+                </VBox>
+                <VBox>
+                    <Label text="Rola"/>
+                    <ComboBox fx:id="roleComboBox" prefWidth="200.0"/>
+                </VBox>
+            </HBox>
+        </VBox>
+        <CustomTableView GridPane.rowIndex="3" fx:id="userTableView" styleClass="dense">
             <columns>
                 <TableColumn fx:id="idTableColumn" prefWidth="75.0" text="ID"/>
                 <TableColumn fx:id="nameTableColumn" prefWidth="106.0" text="Ime"/>

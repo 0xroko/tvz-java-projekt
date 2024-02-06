@@ -31,8 +31,8 @@
                 <Insets bottom="16.0" top="16.0"/>
             </padding>
             <Label fx:id="titleLabel" styleClass="title-2" text="Narudžba"/>
-            <Label text="" HBox.hgrow="ALWAYS"/>
-            <Button fx:id="addItemToOrderButton" text="Dodaj artikal u narudžbu"/>
+            <Label HBox.hgrow="ALWAYS"/>
+            <Button fx:id="addItemToOrderButton" text="Dodaj artikl u narudžbu"/>
         </HBox>
         <CustomTableView fx:id="itemOnOrderTableView" styleClass="dense" GridPane.rowIndex="4">
             <columns>

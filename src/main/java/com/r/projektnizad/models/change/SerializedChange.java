@@ -7,19 +7,19 @@ import java.time.LocalDateTime;
 
 public class SerializedChange implements Serializable {
   // takes change and only saves diff
-  // this is used for saving changes to database
+  // this is used for saving changes to database,
   // so we don't need to save whole change, just diff
   // more robust against changes since we don't need to save whole object
 
-  private DiffContainer<String, String> diff;
+  private final DiffContainer<String, String> diff;
 
-  private User user;
+  private final User user;
 
-  private LocalDateTime dateTime;
+  private final LocalDateTime dateTime;
 
-  private String entityName;
+  private final String entityName;
 
-  private Long entityId;
+  private final Long entityId;
 
   public SerializedChange(DiffContainer<String, String> diff, User user, LocalDateTime dateTime, String entityName, Long entityId) {
     this.diff = diff;

@@ -34,7 +34,7 @@
                 <Insets bottom="16.0" top="16.0"/>
             </padding>
             <Label styleClass="title-2" text="Narudžbe"/>
-            <Label text="" HBox.hgrow="ALWAYS"/>
+            <Label HBox.hgrow="ALWAYS"/>
             <Button onAction="#openOrderAdd" text="Dodaj narudžbu"/>
         </HBox>
         <VBox GridPane.rowIndex="2">

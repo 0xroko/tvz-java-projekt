@@ -46,7 +46,7 @@ public class HistoryChangeService {
 
   private <T extends Entity> ArrayList<Change<T>> read(ObjectInputStream in) throws IOException, ClassNotFoundException {
     Object obj = in.readObject();
-    if (obj instanceof ArrayList) {
+    if (obj instanceof ArrayList<?>) {
       return (ArrayList<Change<T>>) obj;
     }
     return new ArrayList<>();
