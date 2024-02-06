@@ -33,8 +33,6 @@ public class OrderRepository implements Dao<Order> {
                              JOIN category c on c.id = i.category_id
                              WHERE item_on_order.order_id =
                              """ + " " + orderId + ";";
-      logger.info(query);
-
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) {
         items.add(mapToItemOnOrder(rs));

@@ -48,7 +48,6 @@ public class SignaledTaskThread<T, P> extends Thread {
         Thread.currentThread().interrupt();
       }
     }
-    logger.info("Thread ended");
   }
 
   /**

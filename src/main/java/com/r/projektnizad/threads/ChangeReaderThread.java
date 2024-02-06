@@ -57,7 +57,6 @@ public class ChangeReaderThread extends Thread {
     while (!Thread.currentThread().isInterrupted()) {
       try {
         task.call();
-        logger.info("ChangeReaderThread finished");
         Thread.sleep(5000);
       } catch (InterruptedException e) {
         if (forceRerun) {

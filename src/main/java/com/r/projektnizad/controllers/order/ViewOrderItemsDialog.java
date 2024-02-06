@@ -62,13 +62,14 @@ public final class ViewOrderItemsDialog extends Dialog<Boolean> implements Clean
     itemOnOrderTableView.setRowFactory(tv -> {
       TableRow<ItemOnOrder> row = new TableRow<>();
       ContextMenu contextMenu = TableViewContextMenu.build(row, actions);
-      // if done, disable promijeni status
       row.itemProperty().addListener((observable, oldValue, newValue) -> {
         if (newValue != null) {
+          // if done, disable promijeni status
           contextMenu.getItems().get(1).setDisable(newValue.getStatus() == ItemOnOrderStatus.DONE);
+          // if order is not in progress, disable all
+          contextMenu.getItems().forEach(item -> item.setDisable(order.getStatus() != OrderStatus.IN_PROGRESS));
         }
       });
-
       return row;
     });
 

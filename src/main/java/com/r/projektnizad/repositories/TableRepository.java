@@ -96,7 +96,6 @@ public class TableRepository implements Dao<Table> {
       Statement statement = connection.createStatement();
       String query = "SELECT * FROM `table`";
       query = Filter.build(query, filters);
-      logger.info("Query: " + query);
       ResultSet rs = statement.executeQuery(query);
       while (rs.next()) {
         tables.add(mapToTable(rs));

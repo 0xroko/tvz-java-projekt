@@ -60,11 +60,10 @@ public class ModifyItemDialog extends Dialog<Item> {
 
     Validators.buildTextFieldValidator(priceTextField, Validators.number(5, 2));
     Validators.buildTextFieldValidator(defaultStockIncrementTextField, Validators.number(3, 0));
-    Validators.buildTextFieldValidator(stockTextField, Validators.number(2, 2));
+    Validators.buildTextFieldValidator(stockTextField, Validators.number(2, 0));
 
     // only allow preparation time to be visible if the item is a PREPARABLE
     itemTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> preparationField.setVisible(newValue == ItemType.PREPARABLE));
-
 
     validator.createCheck()
             .dependsOn("name", nameTextField.textProperty())

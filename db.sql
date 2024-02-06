@@ -25,7 +25,6 @@ create table item
     item_type               int            not null,
     default_stock_increment int            not null,
     preparation_time        time           null,
-
 --         maybe some day...
     image                   varchar(255),
     constraint item_pk
@@ -98,23 +97,15 @@ values ('Cheeseburger', 'Cheeseburger', 5.00, 1, 100, 1, 1, '00:05:00'),
        ('Screwdriver', 'Screwdriver', 4.00, 10, 100, 0, 1, null);
 
 insert into `table` (name, description, seats)
-values ('Table 1', 'Table 1', 4),
-       ('Table 2', 'Table 2', 4),
-       ('Table 3', 'Table 3', 4),
-       ('Table 4', 'Table 4', 4),
-       ('Table 5', 'Table 5', 4),
-       ('Table 6', 'Table 6', 4),
-       ('Table 7', 'Table 7', 4),
-       ('Table 8', 'Table 8', 4),
-       ('Table 9', 'Table 9', 4),
-       ('Table 10', 'Table 10', 4),
-       ('Table 11', 'Table 11', 4),
-       ('Table 12', 'Table 12', 4),
-       ('Table 13', 'Table 13', 4),
-       ('Table 14', 'Table 14', 4),
-       ('Table 15', 'Table 15', 4),
-       ('Table 16', 'Table 16', 4),
-       ('Table 17', 'Table 17', 4);
+values ('Table 1', 'Terasa dolje', 4),
+       ('Table 2', 'Terasa dolje 2', 4),
+       ('Table 3', 'Terasa gore', 4),
+       ('Table 4', 'Terasa gore 2', 4),
+       ('Table 5', 'Terasa gore 3', 4),
+       ('Table 6', 'Terasa gore 4', 4),
+       ('Table 7', 'Terasa gore 5', 4),
+       ('Table 8', 'Terasa gore 6', 4);
+
 
 
 create table `order`
@@ -165,7 +156,7 @@ create table item_on_order
 
 
 insert into `order` (table_id, user_id, status, note)
-values (1, 1, 0, 'Obitelj Voda'),
+values (1, 1, 0, 'Obitelj 1'),
        (2, 1, 0, 'Obitelj 2'),
        (3, 1, 0, 'Obitelj 3'),
        (4, 1, 0, 'Obitelj 2'),

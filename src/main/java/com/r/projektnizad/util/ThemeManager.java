@@ -89,7 +89,6 @@ public class ThemeManager {
   }
 
   public ThemeManager() {
-    logger.info("Theme manager initialized");
   }
 
 

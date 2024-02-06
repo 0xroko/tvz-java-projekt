@@ -128,6 +128,7 @@ public final class HistoryController implements CleanableScene {
 
     filterDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> dateSearch());
     entityFilterCombobox.valueProperty().addListener((observable, oldValue, newValue) -> {
+
     });
     userFilterComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
     });
