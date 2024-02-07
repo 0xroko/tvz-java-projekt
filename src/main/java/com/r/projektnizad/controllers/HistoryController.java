@@ -6,9 +6,15 @@ import com.r.projektnizad.models.change.Change;
 import com.r.projektnizad.threads.ChangeReaderThread;
 import com.r.projektnizad.util.CustomTableView;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -19,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public final class HistoryController implements CleanableScene {
   @FXML
@@ -43,12 +50,16 @@ public final class HistoryController implements CleanableScene {
   private ComboBox<String> userFilterComboBox;
   private final String allFilter = "Svi";
   private final ChangeReaderThread changeReaderThread = new ChangeReaderThread();
+  private final ObservableList<Change<Entity>> changes = FXCollections.observableArrayList();
 
   private boolean dateChanged = false;
 
   void setFiltersFromChanges(ArrayList<Change<Entity>> changes) {
     var entities = new ArrayList<String>();
     var users = new ArrayList<String>();
+
+    entities.add(allFilter);
+    users.add(allFilter);
 
     for (var change : changes) {
       if (!entities.contains(change.getActualEntity().getEntityName())) {
@@ -59,18 +70,8 @@ public final class HistoryController implements CleanableScene {
       }
     }
 
-    if (!entities.contains(allFilter)) entities.addFirst(allFilter);
-    if (!users.contains(allFilter)) users.addFirst(allFilter);
-
-    entityFilterCombobox.getItems().clear();
     entityFilterCombobox.setItems(FXCollections.observableArrayList(entities));
-
-    userFilterComboBox.getItems().clear();
     userFilterComboBox.setItems(FXCollections.observableArrayList(users));
-
-    entityFilterCombobox.setValue(allFilter);
-    userFilterComboBox.setValue(allFilter);
-
   }
 
   ArrayList<Change<Entity>> filter(ArrayList<Change<Entity>> changes) {
@@ -98,22 +99,13 @@ public final class HistoryController implements CleanableScene {
     changeReaderThread.updateParamsAndRerun(date);
   }
 
+
   public void initialize() {
     dateTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDateTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"))));
     entityNameTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getActualEntity().getEntityName()));
     userTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUser().getUsername() + " (" + cellData.getValue().getUser().getUserType().getName() + ")"));
     typeTableColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getChangeType()));
     idTableColumn.setCellValueFactory(cellData -> new SimpleLongProperty(cellData.getValue().getActualEntity().getId()).asObject());
-
-    changeReaderThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
-      if (dateChanged) {
-        Platform.runLater(() -> setFiltersFromChanges(newValue));
-        dateChanged = false;
-      }
-      historyTableView.setItems(filter(newValue));
-      historyTableView.autoResizeColumns();
-    });
-
     descriptionTableColumn.setCellValueFactory(cellData -> {
       StringBuilder sb = new StringBuilder();
       for (var entry : cellData.getValue().diff().entrySet()) {
@@ -122,17 +114,36 @@ public final class HistoryController implements CleanableScene {
       return new SimpleStringProperty(sb.toString());
     });
 
+    changeReaderThread.getResultProperty().addListener((observable, oldValue, newValue) -> {
+      if (dateChanged) {
+        Platform.runLater(() -> setFiltersFromChanges(newValue));
+        dateChanged = false;
+      }
+      Platform.runLater(() -> changes.setAll(newValue));
+    });
     filterDatePicker.setValue(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+    filterDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> dateSearch());
+
     entityFilterCombobox.setValue(allFilter);
     userFilterComboBox.setValue(allFilter);
 
-    filterDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> dateSearch());
-    entityFilterCombobox.valueProperty().addListener((observable, oldValue, newValue) -> {
+    FilteredList<Change<Entity>> filteredChanges = new FilteredList<>(changes, p -> true);
 
-    });
-    userFilterComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-    });
+    ObjectProperty<Predicate<Change<Entity>>> entityTypeFilter = new SimpleObjectProperty<>();
+    ObjectProperty<Predicate<Change<Entity>>> userFilter = new SimpleObjectProperty<>();
 
+    entityTypeFilter.bind(Bindings.createObjectBinding(() ->
+            change -> entityFilterCombobox.getValue().equals(allFilter) || change.getActualEntity().getEntityName().equals(entityFilterCombobox.getValue()), entityFilterCombobox.valueProperty()));
+
+    userFilter.bind(Bindings.createObjectBinding(() ->
+            change -> userFilterComboBox.getValue().equals(allFilter) || change.getUser().getUsername().equals(userFilterComboBox.getValue()), userFilterComboBox.valueProperty()));
+
+    filteredChanges.predicateProperty().bind(Bindings.createObjectBinding(
+            () -> entityTypeFilter.get().and(userFilter.get()), entityTypeFilter, userFilter));
+
+    filteredChanges.addListener((ListChangeListener<Change<Entity>>) c -> historyTableView.autoResizeColumns());
+
+    historyTableView.setItems(filteredChanges);
     dateSearch();
   }
 

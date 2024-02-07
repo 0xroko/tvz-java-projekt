@@ -16,6 +16,10 @@ import org.controlsfx.control.SearchableComboBox;
 import java.util.Arrays;
 import java.util.function.Predicate;
 
+/*
+Sourced from: https://github.com/controlsfx/controlsfx
+ */
+
 /**
  * A simple skin for a ComboBox, which shows a search field while the
  * popup is showing. The user can type any text into this search field to filter the

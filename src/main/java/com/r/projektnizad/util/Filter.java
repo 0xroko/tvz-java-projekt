@@ -28,14 +28,9 @@ public class Filter {
       return value;
     }
 
-    void setValue(String value) {
-      this.value = value;
-    }
-
   }
 
   private static boolean handleOrAnd(Map.Entry<String, FilterItem> entry, StringBuilder sb, Function<String, String> function) {
-    // if contains | then we have multiple columns to search
     if (entry.getKey().contains("|")) {
       String[] columns = entry.getKey().split("\\|");
       sb.append("(");

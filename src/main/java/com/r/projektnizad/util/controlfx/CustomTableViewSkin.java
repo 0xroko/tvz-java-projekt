@@ -10,6 +10,10 @@ import javafx.scene.control.skin.TableViewSkin;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Source
+https://stackoverflow.com/questions/62679995/javafx-14-resizecolumntofitcontent-method/69441935#69441935
+ */
 public class CustomTableViewSkin extends TableViewSkin {
   private List<CustomTableColumnHeader> columnHeadersList = new ArrayList<>();
 
@@ -46,9 +50,7 @@ public class CustomTableViewSkin extends TableViewSkin {
             if (columnHeadersList == null) {
               columnHeadersList = new ArrayList<>();
             }
-
             columnHeadersList.add(columnHeader);
-
             return columnHeader;
           }
         };

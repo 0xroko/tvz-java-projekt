@@ -84,8 +84,6 @@ public abstract class Change<T extends Entity> implements Serializable {
       return Change.diffSingleEntity(oldEntity);
     }
 
-    // check all members of oldEntity and newEntity
-    // if they are different, add them to diff map
     for (var field : oldEntity.getClass().getDeclaredFields()) {
       field.setAccessible(true);
       try {
@@ -99,14 +97,12 @@ public abstract class Change<T extends Entity> implements Serializable {
 
         if (onlyName && !field.getName().equals("name")) continue;
         if (!oldValue.equals(newValue)) {
-          // if values are not primitive types, recursively call diff
           if (oldValue instanceof Entity) {
             if (newValue == null) continue;
             String entityName = ((Entity) oldValue).getEntityName();
             diff.putAll(new ModifyChange<>((Entity) oldValue, (Entity) newValue).diff(true, prefix + entityName));
             continue;
           }
-          // if enum type, try calling getName method
           if (oldValue instanceof Enum) {
             try {
               String oldValueName = (String) oldValue.getClass().getMethod("getName").invoke(oldValue);
@@ -118,7 +114,6 @@ public abstract class Change<T extends Entity> implements Serializable {
             }
           }
 
-          // if list, map or set, just show additions and removals
           if (oldValue instanceof List<?> && newValue instanceof List<?> && !oldValue.equals(newValue)) {
             try {
               @SuppressWarnings("unchecked")

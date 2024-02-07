@@ -51,9 +51,8 @@ public class Navigator {
     }
     Scene scene = new Scene(window.get());
 
-    // run stop method on previous view
     if (rootStage == null) {
-      logger.error("Root stage is not null");
+      logger.error("Root stage is not null, aborting");
       return;
     }
 
@@ -62,7 +61,6 @@ public class Navigator {
     rootStage.setTitle(title);
     rootStage.show();
 
-    // set exception handler
     Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
       logger.error("Uncaught exception", e);
       new AppDialog().showExceptionMessage(e);
@@ -74,7 +72,7 @@ public class Navigator {
     });
   }
 
-  static public <T extends Dialog<?>> void asDialog(String resourcePath, Dialog<?> controller) {
+  static public void asDialog(String resourcePath, Dialog<?> controller) {
     FXMLLoader l = load(resourcePath);
     l.setController(controller);
 
@@ -88,10 +86,6 @@ public class Navigator {
     }
 
     // add on close listener to clean up
-    controller.setOnCloseRequest(e -> {
-      if (controller instanceof CleanableScene sc) {
-        sc.cleanup();
-      }
-    });
+    controller.setOnCloseRequest(e -> cleanUpLastScene());
   }
 }

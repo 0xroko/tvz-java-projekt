@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2024.
- *
- *
- */
-
 package com.r.projektnizad.util.controlfx;
 
 import atlantafx.base.controls.CustomTextFieldSkin;
@@ -12,6 +6,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.Skin;
 import javafx.scene.control.TextField;
+
+/*
+Sourced from: https://github.com/controlsfx/controlsfx
+ */
 
 public class CustomTextField extends TextField {
 
