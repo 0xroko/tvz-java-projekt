@@ -77,7 +77,6 @@ public class AuthService {
     Optional<User> user = User.hashPassword(password).map(userPassword -> new User(nextUserId(), username, userPassword, userType));
     user.ifPresent(users::add);
     user.ifPresent(u -> new ChangeWriterThread<>(new AddChange<>(u.clone())).start());
-    logger.info("User registered: " + password + " " + user.get().getPassword().toString());
     try {
       saveUsers();
     } catch (IOException e) {

@@ -1,10 +1,13 @@
 package com.r.projektnizad.threads;
 
 import com.r.projektnizad.models.ObservableThreadTask;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 
 public class SignaledTaskThread<T, P> extends Thread {
@@ -12,18 +15,10 @@ public class SignaledTaskThread<T, P> extends Thread {
   private final Object lock = new Object();
   private boolean taskPending = false;
   private final ObservableThreadTask<T, P> task = new ObservableThreadTask<>();
-  private Long period = 0L;
 
   public SignaledTaskThread(Function<P, T> fn) {
     task.setFn(fn);
-    // set thread name
-    this.setName("SignaledTaskThread");
-    this.start();
-  }
-
-  public SignaledTaskThread(Function<P, T> fn, Long period) {
-    task.setFn(fn);
-    this.period = period;
+    setDaemon(false);
     // set thread name
     this.setName("SignaledTaskThread");
     this.start();
@@ -50,13 +45,10 @@ public class SignaledTaskThread<T, P> extends Thread {
     }
   }
 
-  /**
-   * Calling this will keep the old params
-   */
   public void signal() {
     synchronized (lock) {
       taskPending = true;
-      lock.notify();
+      lock.notifyAll();
     }
   }
 
@@ -64,7 +56,7 @@ public class SignaledTaskThread<T, P> extends Thread {
     synchronized (lock) {
       task.setParam(param);
       taskPending = true;
-      lock.notify();
+      lock.notifyAll();
     }
   }
 }

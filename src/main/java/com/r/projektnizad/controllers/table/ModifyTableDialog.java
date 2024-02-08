@@ -39,7 +39,7 @@ public class ModifyTableDialog extends Dialog<Table> {
       if (!seatsTextField.getText().isEmpty()) {
         seatsTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
       } else {
-        seatsTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
+        seatsTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
         c.error("Broj sjedala mora biti cijeli broj");
       }
     }).decorates(seatsTextField).immediate();
@@ -48,7 +48,7 @@ public class ModifyTableDialog extends Dialog<Table> {
       if (!nameTextField.getText().isEmpty()) {
         nameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
       } else {
-        nameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
+        nameTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
         c.error("Ime stola ne smije biti prazno");
       }
     }).decorates(nameTextField).immediate();
@@ -57,7 +57,7 @@ public class ModifyTableDialog extends Dialog<Table> {
       if (!descriptionTextField.getText().isEmpty()) {
         descriptionTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
       } else {
-        descriptionTextField.pseudoClassStateChanged(Styles.STATE_DANGER, false);
+        descriptionTextField.pseudoClassStateChanged(Styles.STATE_DANGER, true);
         c.error("Opis stola ne smije biti prazan");
       }
     }).decorates(descriptionTextField).immediate();
@@ -88,10 +88,10 @@ public class ModifyTableDialog extends Dialog<Table> {
     setResultConverter(buttonType -> {
       if (buttonType == CustomButtonTypes.ADD) {
         return new Table(
-                null,
-                nameTextField.getText(),
-                descriptionTextField.getText(),
-                Long.parseLong(seatsTextField.getText())
+            null,
+            nameTextField.getText(),
+            descriptionTextField.getText(),
+            Long.parseLong(seatsTextField.getText())
         );
       }
 

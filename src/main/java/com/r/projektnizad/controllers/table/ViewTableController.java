@@ -103,15 +103,15 @@ public final class ViewTableController implements CleanableScene {
   }
 
   public void openAddTable(ActionEvent actionEvent) {
-    new ModifyTableDialog(Optional.empty()).showAndWait().ifPresent(table -> {
+    Optional<Table> table = new ModifyTableDialog(Optional.empty()).showAndWait();
+    if (table.isPresent())
       try {
-        tableRepository.save(table);
-        new ChangeWriterThread<>(new AddChange<>(table)).start();
-        tableTaskThread.signal();
+        tableRepository.save(table.get());
+        new ChangeWriterThread<>(new AddChange<>(table.get())).start();
+        tableTaskThread.signal(filters);
       } catch (DatabaseActionFailException e) {
         new AppDialog().showExceptionMessage(e);
       }
-    });
   }
 
   public void editTable(Table table) {
@@ -120,7 +120,7 @@ public final class ViewTableController implements CleanableScene {
       try {
         tableRepository.update(t.getId(), t);
         new ChangeWriterThread<>(new ModifyChange<>(old, t)).start();
-        tableTaskThread.signal();
+        tableTaskThread.signal(filters);
       } catch (DatabaseActionFailException e) {
         new AppDialog().showExceptionMessage(e);
       }

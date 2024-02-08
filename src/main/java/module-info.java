@@ -3,7 +3,6 @@ module com.r.projektnizad {
   requires javafx.fxml;
 
   requires org.slf4j;
-  requires com.h2database;
   requires java.sql;
 
   requires org.controlsfx.controls;
