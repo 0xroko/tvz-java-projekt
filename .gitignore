@@ -42,5 +42,5 @@ logs/
 data/
 
 d.txt
-
 src/main/resources/com/r/projektnizad/app.properties
+**/*.log
