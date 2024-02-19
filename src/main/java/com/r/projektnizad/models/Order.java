@@ -22,14 +22,14 @@ public class Order extends Entity implements Serializable, Cloneable {
   private Long userId;
   @NamedHistoryMember("Detalji")
   private String note;
-  private BigDecimal orderPriceSum = BigDecimal.ZERO;
-  private Long orderItemsCount = 0L;
-  private String orderItemsString = "";
-
   /**
    * If RESERVED, this is the time when the order time is beginning.
    */
+  @NamedHistoryMember("Datum i vrijeme")
   private LocalDateTime orderTime;
+  private BigDecimal orderPriceSum = BigDecimal.ZERO;
+  private Long orderItemsCount = 0L;
+  private String orderItemsString = "";
 
   public Order(Long id, ArrayList<ItemOnOrder> itemsOnOrder, Table table, OrderStatus status, Long userId, LocalDateTime orderTime, String note) {
     super(id);
