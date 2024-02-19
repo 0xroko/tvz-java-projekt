@@ -84,8 +84,5 @@ public class Navigator {
     } catch (IOException e) {
       logger.error("Error loading resource: " + resourcePath, e);
     }
-
-    // add on close listener to clean up
-    controller.setOnCloseRequest(e -> cleanUpLastScene());
   }
 }
